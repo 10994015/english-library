@@ -16,10 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/vocabulary/create', CreateVocabularyComponent::class)->name('vocabulary.create');
-Route::get('/vocabulary/{id}/edit', CreateVocabularyComponent::class)->name('vocabulary.edit');
-Route::get('/', VocabularyComponent::class)->name('vocabulary.index');
-Route::get('/exam', ExamComponent::class)->name('exam');
+
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/vocabulary/create', CreateVocabularyComponent::class)->name('vocabulary.create');
+    Route::get('/vocabulary/{id}/edit', CreateVocabularyComponent::class)->name('vocabulary.edit');
+    Route::get('/', VocabularyComponent::class)->name('vocabulary.index');
+    Route::get('/exam', ExamComponent::class)->name('exam');
+});
+
 
 Route::middleware([
     'auth:sanctum',

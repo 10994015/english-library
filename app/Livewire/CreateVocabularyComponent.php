@@ -13,6 +13,8 @@ class CreateVocabularyComponent extends Component
     public $part_of_speech = '';
     public $example_sentence = '';
     public $example_sentence_translation = '';
+    public $is_important = false; // 新增：是否為重點
+    public $language_type = 'english'; // 新增：語言類型，預設為英文
 
     // 設置編輯模式的標誌
     public $isEditing = false;
@@ -27,6 +29,8 @@ class CreateVocabularyComponent extends Component
         'part_of_speech' => 'nullable|string|max:255',
         'example_sentence' => 'nullable|string|max:255',
         'example_sentence_translation' => 'nullable|string|max:255',
+        'is_important' => 'boolean',
+        'language_type' => 'required|string|in:english,japanese',
     ];
 
     // 接收 URL 參數，決定是新增或編輯模式
@@ -45,6 +49,8 @@ class CreateVocabularyComponent extends Component
             $this->part_of_speech = $vocabulary->part_of_speech;
             $this->example_sentence = $vocabulary->example_sentence;
             $this->example_sentence_translation = $vocabulary->example_sentence_translation;
+            $this->is_important = $vocabulary->is_important ?? false; // 載入是否重點
+            $this->language_type = $vocabulary->language_type ?? 'english'; // 載入語言類型
         }
     }
 
@@ -76,6 +82,8 @@ class CreateVocabularyComponent extends Component
                 'part_of_speech' => $this->part_of_speech,
                 'example_sentence' => $this->example_sentence,
                 'example_sentence_translation' => $this->example_sentence_translation,
+                'is_important' => $this->is_important,
+                'language_type' => $this->language_type,
             ]);
 
             session()->flash('message', '詞彙已成功更新！');
@@ -90,10 +98,15 @@ class CreateVocabularyComponent extends Component
                 'part_of_speech' => $this->part_of_speech,
                 'example_sentence' => $this->example_sentence,
                 'example_sentence_translation' => $this->example_sentence_translation,
+                'is_important' => $this->is_important,
+                'language_type' => $this->language_type,
                 'user_id' => $userId, // 添加用戶 ID
             ]);
 
             $this->reset(['english_word', 'chinese_word', 'part_of_speech', 'example_sentence', 'example_sentence_translation']);
+            // 重置後保持語言類型和重點標記的預設值
+            $this->is_important = false;
+            $this->language_type = 'english';
 
             session()->flash('message', '詞彙已成功添加！');
         }

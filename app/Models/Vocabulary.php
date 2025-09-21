@@ -18,7 +18,14 @@ class Vocabulary extends Model
         'part_of_speech',
         'example_sentence',
         'example_sentence_translation',
+        'is_important',
+        'language_type',
     ];
+
+    protected $casts = [
+        'is_important' => 'boolean',  // 確保布林值正確處理
+    ];
+
 
     public function user()
     {

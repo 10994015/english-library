@@ -33,17 +33,101 @@ class ExamComponent extends Component
     public $testType = 'en_to_zh'; // 預設從英文到中文
     public $mixedMode = false; // 是否啟用混合模式
 
+    // 新增的篩選設定
+    public $importanceFilter = 'all'; // 重點題目篩選: all, important, not_important
+    public $selectedLanguage = 'all'; // 語言篩選: all, english, japanese, korean 等
+    public $availableLanguages = []; // 可用的語言列表
+
+    // 新增 infiniteMode 屬性
+    public $infiniteMode = false; // 無限模式
+
+    // 新增聽力模式屬性
+    public $listeningMode = false; // 聽力模式
+    public $wordHidden = false; // 當前單字是否隱藏
+
     public function mount()
     {
-        // 載入所有詞彙
+        // 載入所有詞彙和語言
         $this->loadVocabularies();
+        $this->loadAvailableLanguages();
+        // 初始化無限模式狀態
+        $this->infiniteMode = ($this->questionCount == 0);
     }
 
     // 載入詞彙庫
     private function loadVocabularies()
     {
         $userId = auth()->id();
-        $this->allVocabularies = Vocabulary::where('user_id', $userId)->get()->toArray();
+        $query = Vocabulary::where('user_id', $userId);
+
+        // 根據重點篩選
+        if ($this->importanceFilter === 'important') {
+            $query->where('is_important', true);
+        } elseif ($this->importanceFilter === 'not_important') {
+            $query->where('is_important', false);
+        }
+
+        // 根據語言篩選
+        if ($this->selectedLanguage !== 'all') {
+            $query->where('language_type', $this->selectedLanguage);
+        }
+
+        $this->allVocabularies = $query->get()->toArray();
+    }
+
+    // 載入可用語言列表
+    private function loadAvailableLanguages()
+    {
+        $userId = auth()->id();
+        $languages = Vocabulary::where('user_id', $userId)
+            ->select('language_type')
+            ->distinct()
+            ->pluck('language_type')
+            ->toArray();
+
+        $this->availableLanguages = $languages;
+    }
+
+    // 當篩選條件改變時重新載入詞彙
+    public function updatedImportanceFilter()
+    {
+        $this->loadVocabularies();
+        // 重置測驗狀態避免按鈕失效
+        if ($this->examStarted) {
+            $this->resetExam();
+        }
+    }
+
+    public function updatedSelectedLanguage()
+    {
+        $this->loadVocabularies();
+        // 重置測驗狀態避免按鈕失效
+        if ($this->examStarted) {
+            $this->resetExam();
+        }
+    }
+
+    // 新增：當題數改變時更新無限模式狀態
+    public function updatedQuestionCount()
+    {
+        $this->infiniteMode = ($this->questionCount == 0);
+    }
+
+    // 新增：切換聽力模式
+    public function toggleListeningMode()
+    {
+        $this->listeningMode = !$this->listeningMode;
+        // 如果開啟聽力模式，強制設定為英翻中模式
+        if ($this->listeningMode) {
+            $this->testType = 'en_to_zh';
+            $this->mixedMode = false;
+        }
+    }
+
+    // 新增：切換單字顯示/隱藏
+    public function toggleWordVisibility()
+    {
+        $this->wordHidden = !$this->wordHidden;
     }
 
     // 開始測驗
@@ -54,13 +138,15 @@ class ExamComponent extends Component
 
         // 檢查詞彙數量是否足夠
         if (count($this->allVocabularies) == 0) {
-            session()->flash('error', '詞彙庫中沒有可用的詞彙，請先新增一些詞彙！');
+            $filterMessage = $this->getFilterMessage();
+            session()->flash('error', "根據目前的篩選條件({$filterMessage})，沒有找到可用的詞彙，請調整篩選條件或新增詞彙！");
             return;
         }
 
         // 如果選擇不重複，但詞彙數量不足
         if (!$this->allowRepeat && count($this->allVocabularies) < $this->questionCount && $this->questionCount != 0) {
-            session()->flash('error', '詞彙庫中只有 ' . count($this->allVocabularies) . ' 個詞彙，不足以進行 ' . $this->questionCount . ' 題的不重複測驗！');
+            $filterMessage = $this->getFilterMessage();
+            session()->flash('error', "根據目前的篩選條件({$filterMessage})，只有 " . count($this->allVocabularies) . " 個詞彙，不足以進行 " . $this->questionCount . " 題的不重複測驗！");
             return;
         }
 
@@ -69,6 +155,40 @@ class ExamComponent extends Component
 
         // 開始測驗
         $this->examStarted = true;
+
+        // 如果是聽力模式，預設隱藏單字
+        if ($this->listeningMode) {
+            $this->wordHidden = true;
+        }
+    }
+
+    // 獲取篩選條件描述
+    private function getFilterMessage()
+    {
+        $messages = [];
+
+        if ($this->importanceFilter === 'important') {
+            $messages[] = '重點詞彙';
+        } elseif ($this->importanceFilter === 'not_important') {
+            $messages[] = '非重點詞彙';
+        } else {
+            $messages[] = '全部詞彙';
+        }
+
+        if ($this->selectedLanguage !== 'all') {
+            $languageNames = [
+                'english' => '英語',
+                'japanese' => '日語',
+                'korean' => '韓語',
+                'spanish' => '西班牙語',
+                'french' => '法語',
+                'german' => '德語'
+            ];
+            $languageName = $languageNames[$this->selectedLanguage] ?? $this->selectedLanguage;
+            $messages[] = $languageName;
+        }
+
+        return implode(' + ', $messages);
     }
 
     // 準備測驗題目
@@ -80,7 +200,7 @@ class ExamComponent extends Component
         $this->questionTypes = [];
 
         // 無限模式下，設定題數為詞彙量 (允許重複) 或詞彙量 (不允許重複)
-        $questionCount = $this->questionCount == 0
+        $questionCount = $this->infiniteMode
             ? ($this->allowRepeat ? 100 : count($availableVocabularies))
             : $this->questionCount;
 
@@ -103,7 +223,10 @@ class ExamComponent extends Component
                 $this->questions[] = $vocabulary;
 
                 // 對於混合模式，為每個問題隨機分配測驗類型
-                if ($this->mixedMode) {
+                // 聽力模式下強制使用英翻中
+                if ($this->listeningMode) {
+                    $this->questionTypes[] = 'en_to_zh';
+                } elseif ($this->mixedMode) {
                     $this->questionTypes[] = (mt_rand(0, 1) == 0) ? 'en_to_zh' : 'zh_to_en';
                 } else {
                     $this->questionTypes[] = $this->testType;
@@ -123,7 +246,7 @@ class ExamComponent extends Component
         }
 
         $currentQuestion = $this->questions[$this->currentQuestionIndex];
-        $currentType = $this->mixedMode ? $this->questionTypes[$this->currentQuestionIndex] : $this->testType;
+        $currentType = ($this->listeningMode || $this->mixedMode) ? $this->questionTypes[$this->currentQuestionIndex] : $this->testType;
 
         // 根據當前題目類型判斷正確答案
         if ($currentType == 'en_to_zh') {
@@ -148,8 +271,16 @@ class ExamComponent extends Component
             'userAnswer' => $this->userAnswer,
             'isCorrect' => $this->answerResult,
             'part_of_speech' => $currentQuestion['part_of_speech'],
-            'type' => $currentType // 記錄題目類型
+            'type' => $currentType, // 記錄題目類型
+            'is_important' => $currentQuestion['is_important'] ?? false, // 記錄是否為重點
+            'language_type' => $currentQuestion['language_type'] ?? 'english', // 記錄語言類型
+            'was_listening_mode' => $this->listeningMode // 記錄是否為聽力模式
         ];
+
+        // 答題後在聽力模式下顯示單字
+        if ($this->listeningMode) {
+            $this->wordHidden = false;
+        }
     }
 
     // 下一題
@@ -161,20 +292,30 @@ class ExamComponent extends Component
         // 檢查是否還有下一題
         if ($this->currentQuestionIndex < count($this->questions) - 1) {
             $this->currentQuestionIndex++;
+            // 如果是聽力模式，新題目預設隱藏單字
+            if ($this->listeningMode) {
+                $this->wordHidden = true;
+            }
         } else {
             // 如果無限模式且允許重複，添加新題目
-            if ($this->questionCount == 0 && $this->allowRepeat) {
+            if ($this->infiniteMode && $this->allowRepeat && count($this->allVocabularies) > 0) {
                 $randomIndex = array_rand($this->allVocabularies);
                 $this->questions[] = $this->allVocabularies[$randomIndex];
 
                 // 為新題目分配類型
-                if ($this->mixedMode) {
+                if ($this->listeningMode) {
+                    $this->questionTypes[] = 'en_to_zh';
+                } elseif ($this->mixedMode) {
                     $this->questionTypes[] = (mt_rand(0, 1) == 0) ? 'en_to_zh' : 'zh_to_en';
                 } else {
                     $this->questionTypes[] = $this->testType;
                 }
 
                 $this->currentQuestionIndex++;
+                // 如果是聽力模式，新題目預設隱藏單字
+                if ($this->listeningMode) {
+                    $this->wordHidden = true;
+                }
             } else {
                 // 測驗結束
                 $this->examFinished = true;
@@ -182,10 +323,10 @@ class ExamComponent extends Component
         }
     }
 
-    // 切換測驗類型 (對非混合模式有效)
+    // 切換測驗類型 (對非混合模式且非聽力模式有效)
     public function toggleTestType()
     {
-        if (!$this->mixedMode) {
+        if (!$this->mixedMode && !$this->listeningMode) {
             $this->testType = $this->testType == 'en_to_zh' ? 'zh_to_en' : 'en_to_zh';
         }
     }
@@ -193,13 +334,15 @@ class ExamComponent extends Component
     // 切換混合模式
     public function toggleMixedMode()
     {
-        $this->mixedMode = !$this->mixedMode;
+        if (!$this->listeningMode) { // 聽力模式下不允許混合模式
+            $this->mixedMode = !$this->mixedMode;
+        }
     }
 
     // 獲取當前問題的類型
     public function getCurrentQuestionType()
     {
-        if ($this->mixedMode && isset($this->questionTypes[$this->currentQuestionIndex])) {
+        if (($this->mixedMode || $this->listeningMode) && isset($this->questionTypes[$this->currentQuestionIndex])) {
             return $this->questionTypes[$this->currentQuestionIndex];
         }
         return $this->testType;
@@ -219,6 +362,9 @@ class ExamComponent extends Component
         $this->correctCount = 0;
         $this->incorrectCount = 0;
         $this->answeredQuestions = [];
+        $this->wordHidden = false; // 重設單字顯示狀態
+        // 重設時保持無限模式狀態與題數一致
+        $this->infiniteMode = ($this->questionCount == 0);
     }
 
     // 返回設定頁
@@ -231,6 +377,25 @@ class ExamComponent extends Component
     public function restartExam()
     {
         $this->startExam();
+    }
+
+    // 獲取語言顯示名稱
+    public function getLanguageDisplayName($languageType)
+    {
+        $languageNames = [
+            'english' => '英語',
+            'japanese' => '日語',
+            'korean' => '韓語',
+            'spanish' => '西班牙語',
+            'french' => '法語',
+            'german' => '德語',
+            'italian' => '義大利語',
+            'portuguese' => '葡萄牙語',
+            'russian' => '俄語',
+            'arabic' => '阿拉伯語'
+        ];
+
+        return $languageNames[$languageType] ?? ucfirst($languageType);
     }
 
     public function render()
