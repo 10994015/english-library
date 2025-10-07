@@ -215,6 +215,9 @@
                                                 @case('pronoun')
                                                     <span class="px-2 py-1 text-xs font-semibold leading-4 text-gray-800 bg-gray-100 rounded-full">代名詞</span>
                                                     @break
+                                                @case('phrase')
+                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-teal-800 bg-teal-100 rounded-full">片語</span>
+                                                    @break
                                                 @default
                                                     <span class="px-2 py-1 text-xs font-semibold leading-4 text-gray-800 bg-gray-100 rounded-full">{{ $vocabulary->part_of_speech }}</span>
                                             @endswitch

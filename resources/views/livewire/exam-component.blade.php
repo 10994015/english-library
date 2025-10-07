@@ -157,7 +157,117 @@
                                 @endforeach
                             </div>
                         </div>
+                        <!-- 題目範圍篩選 -->
+                        <div class="md:col-span-2">
+                            <label class="block mb-3 text-sm font-semibold text-slate-700">題目範圍篩選</label>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-sm text-slate-600">從第</label>
+                                    <input
+                                        type="number"
+                                        wire:model.live="questionRangeStart"
+                                        min="1"
+                                        class="w-20 px-3 py-2 text-sm border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="1"
+                                    >
+                                    <label class="text-sm text-slate-600">題到第</label>
+                                    <input
+                                        type="number"
+                                        wire:model.live="questionRangeEnd"
+                                        min="1"
+                                        class="w-20 px-3 py-2 text-sm border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="50"
+                                    >
+                                    <label class="text-sm text-slate-600">題</label>
+                                </div>
+                                <button
+                                    type="button"
+                                    wire:click="clearQuestionRange"
+                                    class="px-3 py-1.5 text-xs text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                >
+                                    清除範圍
+                                </button>
+                            </div>
+                            <p class="mt-2 text-xs text-slate-500">
+                                @if($questionRangeStart || $questionRangeEnd)
+                                    @if($questionRangeStart && $questionRangeEnd)
+                                        已設定範圍：第 {{ $questionRangeStart }} 題到第 {{ $questionRangeEnd }} 題
+                                    @elseif($questionRangeStart)
+                                        已設定範圍：從第 {{ $questionRangeStart }} 題開始
+                                    @elseif($questionRangeEnd)
+                                        已設定範圍：到第 {{ $questionRangeEnd }} 題結束
+                                    @endif
+                                @else
+                                    未設定範圍，將使用所有符合條件的題目（按 ID 排序）
+                                @endif
+                            </p>
+                        </div>
 
+                        <!-- 更新詞彙數量提示 -->
+                        <div class="flex items-start p-4 mt-6 border rounded-lg bg-amber-50 border-amber-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="text-sm text-amber-800">
+                                <p>根據目前篩選條件，詞彙庫中共有 <span class="font-bold">{{ count($allVocabularies) }}</span> 個詞彙。</p>
+
+                                @if($questionRangeStart || $questionRangeEnd)
+                                    <p class="mt-1 text-xs">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                            </svg>
+                                            範圍篩選
+                                        </span>
+                                        @if($questionRangeStart && $questionRangeEnd)
+                                            已設定題目範圍：第 {{ $questionRangeStart }} - {{ $questionRangeEnd }} 題
+                                        @elseif($questionRangeStart)
+                                            已設定題目範圍：從第 {{ $questionRangeStart }} 題開始
+                                        @elseif($questionRangeEnd)
+                                            已設定題目範圍：到第 {{ $questionRangeEnd }} 題結束
+                                        @endif
+                                    </p>
+                                @endif
+
+                                @if($importanceFilter === 'important')
+                                    <p class="mt-1 text-xs">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mr-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            僅重點詞彙
+                                        </span>
+                                        已篩選僅包含重點標記的詞彙。
+                                    </p>
+                                @elseif($importanceFilter === 'not_important')
+                                    <p class="mt-1 text-xs">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mr-1">
+                                            一般詞彙
+                                        </span>
+                                        已篩選僅包含非重點的一般詞彙。
+                                    </p>
+                                @endif
+                                @if($selectedLanguage !== 'all')
+                                    <p class="mt-1 text-xs">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-1">
+                                            {{ $this->getLanguageDisplayName($selectedLanguage) }}
+                                        </span>
+                                        已篩選指定語言的詞彙。
+                                    </p>
+                                @endif
+                                @if($listeningMode)
+                                    <p class="mt-2 font-medium text-purple-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                        </svg>
+                                        聽力模式已啟用，將強制使用英翻中模式進行測驗。
+                                    </p>
+                                @endif
+                                @if(!$allowRepeat && $questionCount > count($allVocabularies) && $questionCount != 0)
+                                    <p class="mt-2 font-medium text-red-600">由於不允許重複，且詞彙數量不足，實際測驗題數將為 {{ count($allVocabularies) }} 題。</p>
+                                @endif
+                            </div>
+                        </div>
                         <!-- 詞彙重複設定 -->
                         <div class="md:col-span-2">
                             <label class="flex items-center cursor-pointer">
@@ -403,6 +513,7 @@
                                                 @case('verb') bg-emerald-100 text-emerald-800 border border-emerald-200 @break
                                                 @case('adjective') bg-amber-100 text-amber-800 border border-amber-200 @break
                                                 @case('adverb') bg-purple-100 text-purple-800 border border-purple-200 @break
+                                                @case('phrase') bg-pink-100 text-pink-800 border border-pink-200 @break
                                                 @default bg-slate-100 text-slate-800 border border-slate-200 @break
                                             @endswitch
                                         ">

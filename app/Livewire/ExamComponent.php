@@ -33,15 +33,17 @@ class ExamComponent extends Component
     public $testType = 'en_to_zh'; // 預設從英文到中文
     public $mixedMode = false; // 是否啟用混合模式
 
-    // 新增的篩選設定
+    // 篩選設定
     public $importanceFilter = 'all'; // 重點題目篩選: all, important, not_important
     public $selectedLanguage = 'all'; // 語言篩選: all, english, japanese, korean 等
     public $availableLanguages = []; // 可用的語言列表
 
-    // 新增 infiniteMode 屬性
-    public $infiniteMode = false; // 無限模式
+    // 題目範圍篩選
+    public $questionRangeStart = null; // 起始題號
+    public $questionRangeEnd = null;   // 結束題號
 
-    // 新增聽力模式屬性
+    // 無限模式和聽力模式
+    public $infiniteMode = false; // 無限模式
     public $listeningMode = false; // 聽力模式
     public $wordHidden = false; // 當前單字是否隱藏
 
@@ -70,6 +72,34 @@ class ExamComponent extends Component
         // 根據語言篩選
         if ($this->selectedLanguage !== 'all') {
             $query->where('language_type', $this->selectedLanguage);
+        }
+
+        // 按 ID 排序以確保順序一致性
+        $query->orderBy('id', 'asc');
+
+        // 應用題目範圍篩選
+        if ($this->questionRangeStart || $this->questionRangeEnd) {
+            $offset = 0;
+            $limit = null;
+
+            if ($this->questionRangeStart && $this->questionRangeEnd) {
+                // 兩個都有設定
+                $offset = max(0, $this->questionRangeStart - 1); // 轉換為 0-based index
+                $limit = $this->questionRangeEnd - $this->questionRangeStart + 1;
+            } elseif ($this->questionRangeStart) {
+                // 只有起始題號
+                $offset = max(0, $this->questionRangeStart - 1);
+                // 不設定 limit，取到最後
+            } elseif ($this->questionRangeEnd) {
+                // 只有結束題號
+                $offset = 0;
+                $limit = $this->questionRangeEnd;
+            }
+
+            $query->skip($offset);
+            if ($limit !== null) {
+                $query->take($limit);
+            }
         }
 
         $this->allVocabularies = $query->get()->toArray();
@@ -107,13 +137,67 @@ class ExamComponent extends Component
         }
     }
 
-    // 新增：當題數改變時更新無限模式狀態
+    // 當範圍篩選條件改變時重新載入詞彙
+    public function updatedQuestionRangeStart()
+    {
+        // 驗證起始題號
+        if ($this->questionRangeStart !== null && $this->questionRangeStart < 1) {
+            $this->questionRangeStart = 1;
+        }
+
+        // 如果起始題號大於結束題號，自動調整結束題號
+        if ($this->questionRangeStart && $this->questionRangeEnd && $this->questionRangeStart > $this->questionRangeEnd) {
+            $this->questionRangeEnd = $this->questionRangeStart;
+        }
+
+        $this->loadVocabularies();
+
+        // 重置測驗狀態避免按鈕失效
+        if ($this->examStarted) {
+            $this->resetExam();
+        }
+    }
+
+    public function updatedQuestionRangeEnd()
+    {
+        // 驗證結束題號
+        if ($this->questionRangeEnd !== null && $this->questionRangeEnd < 1) {
+            $this->questionRangeEnd = 1;
+        }
+
+        // 如果結束題號小於起始題號，自動調整起始題號
+        if ($this->questionRangeStart && $this->questionRangeEnd && $this->questionRangeEnd < $this->questionRangeStart) {
+            $this->questionRangeStart = $this->questionRangeEnd;
+        }
+
+        $this->loadVocabularies();
+
+        // 重置測驗狀態避免按鈕失效
+        if ($this->examStarted) {
+            $this->resetExam();
+        }
+    }
+
+    // 清除題目範圍設定
+    public function clearQuestionRange()
+    {
+        $this->questionRangeStart = null;
+        $this->questionRangeEnd = null;
+        $this->loadVocabularies();
+
+        // 重置測驗狀態避免按鈕失效
+        if ($this->examStarted) {
+            $this->resetExam();
+        }
+    }
+
+    // 當題數改變時更新無限模式狀態
     public function updatedQuestionCount()
     {
         $this->infiniteMode = ($this->questionCount == 0);
     }
 
-    // 新增：切換聽力模式
+    // 切換聽力模式
     public function toggleListeningMode()
     {
         $this->listeningMode = !$this->listeningMode;
@@ -124,7 +208,7 @@ class ExamComponent extends Component
         }
     }
 
-    // 新增：切換單字顯示/隱藏
+    // 切換單字顯示/隱藏
     public function toggleWordVisibility()
     {
         $this->wordHidden = !$this->wordHidden;
@@ -140,6 +224,12 @@ class ExamComponent extends Component
         if (count($this->allVocabularies) == 0) {
             $filterMessage = $this->getFilterMessage();
             session()->flash('error', "根據目前的篩選條件({$filterMessage})，沒有找到可用的詞彙，請調整篩選條件或新增詞彙！");
+            return;
+        }
+
+        // 驗證範圍設定的合理性
+        if ($this->questionRangeStart && $this->questionRangeEnd && $this->questionRangeStart > $this->questionRangeEnd) {
+            session()->flash('error', "起始題號不能大於結束題號，請檢查範圍設定！");
             return;
         }
 
@@ -186,6 +276,17 @@ class ExamComponent extends Component
             ];
             $languageName = $languageNames[$this->selectedLanguage] ?? $this->selectedLanguage;
             $messages[] = $languageName;
+        }
+
+        // 添加範圍信息
+        if ($this->questionRangeStart || $this->questionRangeEnd) {
+            if ($this->questionRangeStart && $this->questionRangeEnd) {
+                $messages[] = "第{$this->questionRangeStart}-{$this->questionRangeEnd}題";
+            } elseif ($this->questionRangeStart) {
+                $messages[] = "從第{$this->questionRangeStart}題開始";
+            } elseif ($this->questionRangeEnd) {
+                $messages[] = "到第{$this->questionRangeEnd}題";
+            }
         }
 
         return implode(' + ', $messages);
@@ -365,6 +466,17 @@ class ExamComponent extends Component
         $this->wordHidden = false; // 重設單字顯示狀態
         // 重設時保持無限模式狀態與題數一致
         $this->infiniteMode = ($this->questionCount == 0);
+
+        // 注意：這裡不重置範圍篩選，因為用戶可能想要繼續使用相同的範圍
+    }
+
+    // 完全重置（包括範圍篩選）
+    public function fullReset()
+    {
+        $this->resetExam();
+        $this->questionRangeStart = null;
+        $this->questionRangeEnd = null;
+        $this->loadVocabularies();
     }
 
     // 返回設定頁
@@ -377,6 +489,26 @@ class ExamComponent extends Component
     public function restartExam()
     {
         $this->startExam();
+    }
+
+    // 獲取總詞彙數量（不受範圍篩選影響，用於顯示完整統計）
+    public function getTotalVocabularyCount()
+    {
+        $userId = auth()->id();
+        $query = Vocabulary::where('user_id', $userId);
+
+        // 只應用重點和語言篩選，不應用範圍篩選
+        if ($this->importanceFilter === 'important') {
+            $query->where('is_important', true);
+        } elseif ($this->importanceFilter === 'not_important') {
+            $query->where('is_important', false);
+        }
+
+        if ($this->selectedLanguage !== 'all') {
+            $query->where('language_type', $this->selectedLanguage);
+        }
+
+        return $query->count();
     }
 
     // 獲取語言顯示名稱

@@ -176,6 +176,7 @@
                                     <option value="conjunction">連接詞 (Conjunction)</option>
                                     <option value="pronoun">代名詞 (Pronoun)</option>
                                     <option value="interjection">感嘆詞 (Interjection)</option>
+                                    <option value="phrase">片語 (Phrase)</option>
                                 @endif
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-700">

@@ -103,10 +103,10 @@ class CreateVocabularyComponent extends Component
                 'user_id' => $userId, // 添加用戶 ID
             ]);
 
-            $this->reset(['english_word', 'chinese_word', 'part_of_speech', 'example_sentence', 'example_sentence_translation']);
+            // $this->reset(['english_word', 'chinese_word', 'part_of_speech', 'example_sentence', 'example_sentence_translation']);
             // 重置後保持語言類型和重點標記的預設值
-            $this->is_important = false;
-            $this->language_type = 'english';
+            // $this->is_important = false;
+            // $this->language_type = 'english';
 
             session()->flash('message', '詞彙已成功添加！');
         }
