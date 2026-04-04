@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\CreateVocabularyComponent;
+use App\Livewire\DashboardComponent;
 use App\Livewire\ExamComponent;
 use App\Livewire\VocabularyComponent;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/vocabulary/{id}/edit', CreateVocabularyComponent::class)->name('vocabulary.edit');
     Route::get('/', VocabularyComponent::class)->name('vocabulary.index');
     Route::get('/exam', ExamComponent::class)->name('exam');
+    Route::get('/exam/srs', ExamComponent::class)
+    ->name('exam.srs')
+    ->defaults('srs', true);
+    Route::get('/dashboard', DashboardComponent::class)
+    ->name('dashboard');
 });
 
 
@@ -31,7 +37,4 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
 });

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(php -r \":*)",
+      "Bash(php -r \"echo preg_match_all\\(''/@if\\\\b/'', file_get_contents\\(''resources/views/livewire/exam-component.blade.php''\\)\\); echo '' ''; echo preg_match_all\\(''/@endif\\\\b/'', file_get_contents\\(''resources/views/livewire/exam-component.blade.php''\\)\\);\")",
+      "Bash(xargs grep:*)",
+      "Bash(php -l \"c:/Users/user/Desktop/english-words/storage/framework/views/8ae5211475192968bf32cd6d0979343e.php\")",
+      "Bash(php -l \"c:/Users/user/Desktop/english-words/storage/framework/views/b14ea3610d017ca8a54cf04e6f3cde51.php\")",
+      "Bash(php -l \"c:/Users/user/Desktop/english-words/storage/framework/views/b40844221335e8f1876ae38ec9e4a0cd.php\")",
+      "Bash(grep -n \"@if\\($sp>=90\\)Excellent\\\\|@if\\($sp>=90\\)🏆\" \"c:/Users/user/Desktop/english-words/resources/views/livewire/exam-component.blade.php\")",
+      "Bash(xargs php:*)"
+    ]
+  }
+}

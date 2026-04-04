@@ -19,9 +19,26 @@ class VocabularyComponent extends Component
     // 重點詞彙篩選
     public $importantFilter = '';
 
+    // 排序
+    public $sortBy = 'newest';
+
+    // 每頁顯示筆數
+    public $perPage = 10;
+
     // 確認刪除的 ID 和詞彙資訊
     public $confirmingDelete = null;
-    public $deletingVocabulary = null;
+    public ?Vocabulary $deletingVocabulary = null;
+
+    // 編輯 modal
+    public $showEditModal = false;
+    public $editingId = null;
+    public $editEnglishWord = '';
+    public $editChineseWords = [''];
+    public $editPartOfSpeech = '';
+    public $editExampleSentence = '';
+    public $editExampleSentenceTranslation = '';
+    public $editIsImportant = false;
+    public $editLanguageType = 'english';
 
     // 重置分頁當搜尋條件改變時
     public function updatingSearch()
@@ -35,6 +52,16 @@ class VocabularyComponent extends Component
     }
 
     public function updatingImportantFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortBy()
     {
         $this->resetPage();
     }
@@ -94,6 +121,84 @@ class VocabularyComponent extends Component
         $this->deletingVocabulary = null;
     }
 
+    // 開啟編輯 modal
+    public function openEdit($id)
+    {
+        $vocabulary = Vocabulary::where('id', $id)->where('user_id', auth()->id())->first();
+        if (!$vocabulary) return;
+
+        $this->editingId = $id;
+        $this->editEnglishWord = $vocabulary->english_word;
+        $this->editChineseWords = is_array($vocabulary->chinese_word) ? $vocabulary->chinese_word : [$vocabulary->chinese_word];
+        $this->editPartOfSpeech = $vocabulary->part_of_speech ?? '';
+        $this->editExampleSentence = $vocabulary->example_sentence ?? '';
+        $this->editExampleSentenceTranslation = $vocabulary->example_sentence_translation ?? '';
+        $this->editIsImportant = $vocabulary->is_important ?? false;
+        $this->editLanguageType = $vocabulary->language_type ?? 'english';
+        $this->showEditModal = true;
+        $this->resetErrorBag();
+    }
+
+    public function closeEdit()
+    {
+        $this->showEditModal = false;
+        $this->editingId = null;
+    }
+
+    public function addEditMeaning()
+    {
+        $this->editChineseWords[] = '';
+    }
+
+    public function removeEditMeaning($index)
+    {
+        if (count($this->editChineseWords) > 1) {
+            array_splice($this->editChineseWords, $index, 1);
+            $this->editChineseWords = array_values($this->editChineseWords);
+        }
+    }
+
+    public function saveEdit()
+    {
+        $this->validate([
+            'editEnglishWord'                  => 'required|string|max:255',
+            'editChineseWords'                 => 'required|array|min:1',
+            'editChineseWords.*'               => 'required|string|max:255',
+            'editPartOfSpeech'                 => 'nullable|string|max:255',
+            'editExampleSentence'              => 'nullable|string|max:255',
+            'editExampleSentenceTranslation'   => 'nullable|string|max:255',
+            'editIsImportant'                  => 'boolean',
+            'editLanguageType'                 => 'required|string|in:english,japanese',
+        ]);
+
+        $meanings = array_values(array_filter(
+            array_map('trim', $this->editChineseWords),
+            fn($v) => $v !== ''
+        ));
+
+        if (empty($meanings)) {
+            $this->addError('editChineseWords.0', '請至少輸入一個中文意思');
+            return;
+        }
+
+        $vocabulary = Vocabulary::where('id', $this->editingId)->where('user_id', auth()->id())->first();
+        if (!$vocabulary) return;
+
+        $vocabulary->update([
+            'english_word'                  => $this->editEnglishWord,
+            'chinese_word'                  => $meanings,
+            'part_of_speech'                => $this->editPartOfSpeech ?: null,
+            'example_sentence'              => $this->editExampleSentence ?: null,
+            'example_sentence_translation'  => $this->editExampleSentenceTranslation ?: null,
+            'is_important'                  => $this->editIsImportant,
+            'language_type'                 => $this->editLanguageType,
+        ]);
+
+        $this->showEditModal = false;
+        $this->editingId = null;
+        session()->flash('message', '詞彙已成功更新！');
+    }
+
     // 清除所有篩選
     public function clearFilters()
     {
@@ -122,8 +227,11 @@ class VocabularyComponent extends Component
                 $query->where('is_important', $this->importantFilter === '1');
             })
             ->orderBy('is_important', 'desc') // 重點詞彙排在前面
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->when($this->sortBy === 'oldest', fn($q) => $q->orderBy('created_at', 'asc'))
+            ->when($this->sortBy === 'az', fn($q) => $q->orderBy('english_word', 'asc'))
+            ->when($this->sortBy === 'za', fn($q) => $q->orderBy('english_word', 'desc'))
+            ->when($this->sortBy === 'newest' || !in_array($this->sortBy, ['oldest','az','za']), fn($q) => $q->orderBy('created_at', 'desc'))
+            ->paginate($this->perPage);
 
         // 統計資料
         $stats = [

@@ -20,16 +20,21 @@ class Vocabulary extends Model
         'example_sentence_translation',
         'is_important',
         'language_type',
+        'srs_interval', 'srs_ease', 'srs_repetitions', 'srs_next_review',
     ];
 
     protected $casts = [
-        'is_important' => 'boolean',  // 確保布林值正確處理
+        'is_important' => 'boolean',
+        'chinese_word'  => 'array',   // JSON 陣列，存放多個中文意思
+        'srs_next_review' => 'datetime',
     ];
-
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
+    public function examResults()
+    {
+        return $this->hasMany(ExamResult::class, 'vocabulary_id');
+    }
 }

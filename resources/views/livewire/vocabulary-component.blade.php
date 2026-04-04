@@ -1,328 +1,453 @@
-<div class="min-h-screen px-4 py-6 bg-gray-100 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-7xl">
-        <!-- 頁面標題與新增按鈕 -->
-        <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:justify-between lg:items-center">
-            <div>
-                <h1 class="flex items-center gap-2 text-3xl font-bold text-gray-900">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253z" />
-                    </svg>
-                    詞彙列表
-                </h1>
-                <p class="mt-2 text-gray-600">管理您的多語言詞彙庫</p>
-            </div>
-            <a href="{{ route('vocabulary.create') }}" class="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                新增詞彙
-            </a>
-        </div>
+<div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
 
-        <!-- 統計卡片 -->
-        <div class="grid grid-cols-2 gap-4 mb-6 md:grid-cols-4">
-            <div class="p-4 bg-white rounded-lg shadow">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-500">總詞彙</p>
-                        <p class="text-lg font-semibold text-gray-900">{{ $stats['total'] }}</p>
-                    </div>
-                </div>
-            </div>
+.vl-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
 
-            <div class="p-4 bg-white rounded-lg shadow">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-500">重點詞彙</p>
-                        <p class="text-lg font-semibold text-gray-900">{{ $stats['important'] }}</p>
-                    </div>
-                </div>
-            </div>
+/* confetti */
+.vl-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.vl-deco i{position:absolute;display:block;border-radius:3px}
+.vl-deco i:nth-child(1){width:26px;height:26px;background:var(--pink);top:7%;left:2%;transform:rotate(20deg);opacity:.65}
+.vl-deco i:nth-child(2){width:18px;height:18px;background:var(--cyan);top:14%;right:3%;transform:rotate(-18deg);opacity:.55}
+.vl-deco i:nth-child(3){width:22px;height:10px;background:var(--orange);top:42%;left:1%;transform:rotate(40deg);opacity:.6}
+.vl-deco i:nth-child(4){width:14px;height:14px;background:var(--lime);top:68%;right:2%;transform:rotate(30deg);opacity:.7;border:2px solid var(--ink)}
+.vl-deco i:nth-child(5){width:30px;height:11px;background:var(--pink);top:83%;left:5%;transform:rotate(-22deg);opacity:.45}
+.vl-deco i:nth-child(6){width:15px;height:15px;background:var(--cyan);top:52%;right:4%;transform:rotate(60deg);opacity:.5}
 
-            <div class="p-4 bg-white rounded-lg shadow">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <span class="text-2xl">🇺🇸</span>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-500">英語詞彙</p>
-                        <p class="text-lg font-semibold text-gray-900">{{ $stats['english'] }}</p>
-                    </div>
-                </div>
-            </div>
+.vl-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto}
 
-            <div class="p-4 bg-white rounded-lg shadow">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <span class="text-2xl">🇯🇵</span>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-500">日語詞彙</p>
-                        <p class="text-lg font-semibold text-gray-900">{{ $stats['japanese'] }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+/* header */
+.vl-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+.vl-hdr-l{display:flex;flex-direction:column;gap:5px}
+.vl-title{font-family:var(--ffd);font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+.vl-title mark{background:var(--lime);padding:0 8px;border:2px solid var(--ink);border-radius:6px;font-style:normal}
+.vl-sub{font-size:.88rem;font-weight:500;color:#666}
+.vl-btn-add{display:inline-flex;align-items:center;gap:7px;padding:12px 24px;background:var(--ink);color:var(--lime);font-family:var(--ffd);font-size:.92rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;white-space:nowrap}
+.vl-btn-add:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.vl-btn-add svg{width:16px;height:16px;flex-shrink:0}
 
-        <!-- 提示訊息 -->
-        @if (session()->has('message'))
-            <div class="flex items-center p-4 mb-6 text-green-700 border-l-4 border-green-400 rounded-lg shadow-sm bg-green-50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                {{ session('message') }}
-            </div>
-        @endif
+/* stats */
+.vl-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:28px}
+@media(max-width:680px){.vl-stats{grid-template-columns:repeat(2,1fr)}}
+.vl-stat{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);padding:17px 18px;display:flex;flex-direction:column;gap:4px;transition:transform .15s,box-shadow .15s}
+.vl-stat:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.vl-stat:nth-child(1){background:var(--lime)}
+.vl-stat:nth-child(2){background:var(--pink);color:var(--white)}
+.vl-stat:nth-child(2) .vl-slabel{color:rgba(255,255,255,.75)}
+.vl-stat:nth-child(3){background:var(--cyan)}
+.vl-stat:nth-child(4){background:var(--orange);color:var(--white)}
+.vl-stat:nth-child(4) .vl-slabel{color:rgba(255,255,255,.75)}
+.vl-sicon{font-size:1.4rem;line-height:1}
+.vl-slabel{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#444}
+.vl-sval{font-family:var(--ffd);font-size:1.85rem;font-weight:800;line-height:1}
 
-        <!-- 詞彙列表 -->
-        <div class="overflow-hidden bg-white rounded-lg shadow-md">
-            <!-- 篩選與搜尋區域 -->
-            <div class="p-4 border-b border-gray-200 bg-gray-50">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <h2 class="flex items-center gap-2 text-xl font-semibold text-gray-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                        </svg>
-                        詞彙管理
-                    </h2>
+/* flash */
+.vl-flash{display:flex;align-items:center;gap:10px;padding:13px 17px;background:var(--lime);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;font-weight:600;font-size:.9rem}
+.vl-flash svg{width:17px;height:17px;flex-shrink:0}
 
-                    <div class="flex flex-col gap-3 md:flex-row">
-                        <!-- 搜尋欄位 -->
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <input type="text" wire:model.live.debounce.300ms="search" placeholder="搜尋詞彙、翻譯或例句..."
-                                class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-md md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
+/* table card */
+.vl-card{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh-lg);overflow:hidden}
 
-                        <!-- 語言類型篩選 -->
-                        <select wire:model.live="languageFilter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">所有語言</option>
-                            <option value="english">🇺🇸 英語</option>
-                            <option value="japanese">🇯🇵 日語</option>
-                        </select>
+/* toolbar */
+.vl-tbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:2px solid var(--ink);background:var(--cream);flex-wrap:wrap}
+.vl-tbar-t{font-family:var(--ffd);font-size:1rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.vl-tbar-t svg{width:17px;height:17px}
+.vl-tbar-c{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.vl-sw{position:relative}
+.vl-sw svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#999}
+.vl-sinput{padding:8px 11px 8px 32px;border:2px solid var(--ink);border-radius:8px;font-family:var(--ffb);font-size:.85rem;font-weight:500;background:var(--white);width:190px;outline:none;transition:box-shadow .12s}
+.vl-sinput:focus{box-shadow:var(--sh)}
+.vl-fsel{padding:8px 12px;border:2px solid var(--ink);border-radius:8px;font-family:var(--ffb);font-size:.82rem;font-weight:600;background:var(--white);cursor:pointer;outline:none}
+.vl-fsel:focus{box-shadow:var(--sh)}
+.vl-bclear{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;border:2px solid var(--ink);border-radius:8px;font-family:var(--ffb);font-size:.8rem;font-weight:600;background:var(--white);cursor:pointer;transition:background .12s}
+.vl-bclear:hover{background:#eeeae0}
+.vl-bclear svg{width:12px;height:12px}
 
-                        <!-- 重點詞彙篩選 -->
-                        <select wire:model.live="importantFilter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">所有詞彙</option>
-                            <option value="1">⭐ 重點詞彙</option>
-                            <option value="0">一般詞彙</option>
-                        </select>
+/* table */
+.vl-table{width:100%;border-collapse:collapse}
+.vl-table thead tr{border-bottom:2px solid var(--ink);background:#faf9f4}
+.vl-table th{padding:12px 18px;text-align:left;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666}
+.vl-table tbody tr{border-bottom:1.5px solid #e8e4d8;transition:background .1s}
+.vl-table tbody tr:last-child{border-bottom:none}
+.vl-table tbody tr:hover{background:#faf8f2}
+.vl-table td{padding:14px 18px;vertical-align:middle;color:var(--ink)}
 
-                        <!-- 清除篩選按鈕 -->
-                        @if($search || $languageFilter || $importantFilter)
-                            <button wire:click="clearFilters" class="flex items-center gap-1 px-3 py-2 text-gray-700 transition-colors bg-gray-200 rounded-md hover:bg-gray-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                清除
-                            </button>
-                        @endif
-                    </div>
-                </div>
-            </div>
+.vl-bstar{background:none;border:none;font-size:1.3rem;cursor:pointer;transition:transform .15s;line-height:1;padding:0}
+.vl-bstar:hover{transform:scale(1.3)}
+.vl-wrd{font-family:var(--ffb);font-size:.97rem;font-weight:700}
+.vl-m1{font-size:.88rem;font-weight:500}
+.vl-mlist{display:flex;flex-direction:column;gap:2px}
+.vl-mitem{font-size:.85rem;font-weight:500;display:flex;align-items:baseline;gap:4px}
+.vl-mnum{font-size:.68rem;font-weight:700;color:#bbb;flex-shrink:0}
 
-            <!-- 詞彙表格 -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">重點</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">語言</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">詞彙</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">中文翻譯</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">詞性</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">例句</th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($vocabularies as $vocabulary)
-                            <tr class="transition-colors hover:bg-gray-50">
-                                <!-- 重點標記 -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <button wire:click="toggleImportant({{ $vocabulary->id }})"
-                                        class="text-2xl transition-transform hover:scale-110 focus:outline-none"
-                                        title="{{ $vocabulary->is_important ? '取消重點標記' : '標記為重點' }}">
-                                        @if($vocabulary->is_important)
-                                            <span class="text-amber-400">⭐</span>
-                                        @else
-                                            <span class="text-gray-300 hover:text-amber-400">☆</span>
-                                        @endif
-                                    </button>
-                                </td>
+.vl-pos{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;border:1.5px solid currentColor}
+.vl-pos-noun{color:#1d5fe8;background:#e8f0ff}
+.vl-pos-verb{color:#0a8a3e;background:#e4f7ed}
+.vl-pos-adjective{color:#a05c00;background:#fff3e0}
+.vl-pos-adverb{color:#6b21a8;background:#f3e8ff}
+.vl-pos-phrase{color:#be185d;background:#fce7f3}
+.vl-pos-preposition{color:#3730a3;background:#e0e7ff}
+.vl-pos-conjunction{color:#b91c1c;background:#fee2e2}
+.vl-pos-pronoun{color:#374151;background:#f3f4f6}
+.vl-pos-particle{color:#9d174d;background:#fdf2f8}
+.vl-pos-default{color:#374151;background:#f3f4f6}
 
-                                <!-- 語言類型 -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-xl">
-                                        @if($vocabulary->language_type === 'japanese')
-                                            🇯🇵
-                                        @else
-                                            🇺🇸
-                                        @endif
-                                    </span>
-                                </td>
+.vl-exmain{font-size:.8rem;color:#333;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-extrans{font-size:.75rem;color:#aaa;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+.vl-noex{font-size:.78rem;color:#ccc;font-style:italic}
 
-                                <!-- 詞彙 -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $vocabulary->english_word }}</div>
-                                </td>
+.vl-ag{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.vl-ba{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;border:1.5px solid var(--ink);background:var(--white);cursor:pointer;transition:background .1s,transform .1s;text-decoration:none;color:var(--ink)}
+.vl-ba:hover{background:var(--ink);color:var(--white);transform:translate(-1px,-1px)}
+.vl-ba--del:hover{background:var(--pink);border-color:var(--pink);color:var(--white)}
+.vl-ba svg{width:13px;height:13px}
 
-                                <!-- 中文翻譯 -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $vocabulary->chinese_word }}</div>
-                                </td>
+.vl-empty{display:flex;flex-direction:column;align-items:center;padding:52px 24px;gap:10px;text-align:center}
+.vl-empty svg{width:42px;height:42px;color:#ccc}
+.vl-empty-t{font-family:var(--ffd);font-size:1.1rem;font-weight:700;color:#777}
+.vl-empty-s{font-size:.86rem;color:#aaa}
+.vl-bempty{margin-top:4px;display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--ink);color:var(--lime);font-family:var(--ffd);font-size:.88rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);transition:transform .15s}
+.vl-bempty:hover{transform:translate(-2px,-2px)}
 
-                                <!-- 詞性 -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-500">
-                                        @if($vocabulary->part_of_speech)
-                                            @switch($vocabulary->part_of_speech)
-                                                @case('noun')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-blue-800 bg-blue-100 rounded-full">名詞</span>
-                                                    @break
-                                                @case('verb')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-green-800 bg-green-100 rounded-full">動詞</span>
-                                                    @break
-                                                @case('adjective')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-yellow-800 bg-yellow-100 rounded-full">形容詞</span>
-                                                    @break
-                                                @case('adverb')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-purple-800 bg-purple-100 rounded-full">副詞</span>
-                                                    @break
-                                                @case('particle')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-pink-800 bg-pink-100 rounded-full">助詞</span>
-                                                    @break
-                                                @case('preposition')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-indigo-800 bg-indigo-100 rounded-full">介系詞</span>
-                                                    @break
-                                                @case('conjunction')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-red-800 bg-red-100 rounded-full">連接詞</span>
-                                                    @break
-                                                @case('pronoun')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-gray-800 bg-gray-100 rounded-full">代名詞</span>
-                                                    @break
-                                                @case('phrase')
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-teal-800 bg-teal-100 rounded-full">片語</span>
-                                                    @break
-                                                @default
-                                                    <span class="px-2 py-1 text-xs font-semibold leading-4 text-gray-800 bg-gray-100 rounded-full">{{ $vocabulary->part_of_speech }}</span>
-                                            @endswitch
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </div>
-                                </td>
+.vl-pagi{padding:13px 20px;border-top:2px solid var(--ink);background:#faf9f4}
 
-                                <!-- 例句 -->
-                                <td class="max-w-xs px-6 py-4">
-                                    @if($vocabulary->example_sentence)
-                                        <div class="text-sm text-gray-900 truncate" title="{{ $vocabulary->example_sentence }}">{{ $vocabulary->example_sentence }}</div>
-                                        @if($vocabulary->example_sentence_translation)
-                                            <div class="text-sm text-gray-500 truncate" title="{{ $vocabulary->example_sentence_translation }}">{{ $vocabulary->example_sentence_translation }}</div>
-                                        @endif
-                                    @else
-                                        <div class="text-sm text-gray-400">無例句</div>
-                                    @endif
-                                </td>
+/* modal */
+.vl-moverlay{position:fixed;inset:0;background:rgba(13,13,13,.65);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.vl-mbox{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:8px 8px 0 var(--ink);max-width:400px;width:100%;padding:28px;text-align:center}
+.vl-mico{width:50px;height:50px;background:var(--pink);border:2px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.vl-mico svg{width:22px;height:22px;color:var(--white)}
+.vl-mtitle{font-family:var(--ffd);font-size:1.25rem;font-weight:800;margin-bottom:12px}
+.vl-mprev{background:var(--cream);border:2px solid #ddd;border-radius:9px;padding:11px 14px;margin-bottom:12px}
+.vl-mprev-w{font-family:var(--ffd);font-size:.97rem;font-weight:700}
+.vl-mprev-m{font-size:.85rem;color:#555;margin-top:2px}
+.vl-mprev-s{font-size:.8rem;color:#f59e0b;margin-top:2px}
+.vl-mtext{font-size:.85rem;color:#666;margin-bottom:20px}
+.vl-macts{display:flex;gap:9px;justify-content:center}
+.vl-bcancel{padding:10px 20px;border:2px solid var(--ink);border-radius:9px;font-family:var(--ffd);font-weight:700;font-size:.88rem;background:var(--white);cursor:pointer;transition:background .12s}
+.vl-bcancel:hover{background:#eeeae0}
+.vl-bdel{padding:10px 20px;border:2px solid var(--ink);border-radius:9px;font-family:var(--ffd);font-weight:700;font-size:.88rem;background:var(--pink);color:var(--white);cursor:pointer;box-shadow:var(--sh);transition:transform .12s,box-shadow .12s}
+.vl-bdel:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
 
-                                <!-- 操作 -->
-                                <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('vocabulary.edit', $vocabulary->id) }}"
-                                           class="p-1 text-indigo-600 transition-colors rounded hover:text-indigo-900"
-                                           title="編輯">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                        <button wire:click="confirmDelete({{ $vocabulary->id }})"
-                                                class="p-1 text-red-600 transition-colors rounded hover:text-red-900"
-                                                title="刪除">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-8 text-center">
-                                    <div class="flex flex-col items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253z" />
-                                        </svg>
-                                        <p class="text-lg font-medium text-gray-500">暫無詞彙資料</p>
-                                        <p class="mt-1 text-gray-400">開始建立您的詞彙庫吧！</p>
-                                        <a href="{{ route('vocabulary.create') }}" class="px-4 py-2 mt-4 text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700">
-                                            新增第一個詞彙
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+/* edit modal */
+.vl-ebox{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:8px 8px 0 var(--ink);max-width:540px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+.vl-ebox-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:2px solid var(--ink);flex-shrink:0}
+.vl-ebox-ttl{font-family:var(--ffd);font-size:1.15rem;font-weight:800}
+.vl-ebox-close{background:none;border:1.5px solid var(--ink);border-radius:7px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);transition:background .1s}
+.vl-ebox-close:hover{background:var(--ink);color:var(--white)}
+.vl-ebox-close svg{width:15px;height:15px}
+.vl-ebox-body{overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:13px}
+.vl-ebox-ftr{padding:14px 22px;border-top:2px solid var(--ink);display:flex;gap:9px;justify-content:flex-end;flex-shrink:0}
+.vl-ef{display:flex;flex-direction:column;gap:5px}
+.vl-elabel{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555}
+.vl-einput{padding:9px 12px;border:2px solid var(--ink);border-radius:8px;font-family:var(--ffb);font-size:.88rem;background:var(--white);outline:none;transition:box-shadow .12s;width:100%}
+.vl-einput:focus{box-shadow:var(--sh)}
+.vl-esel{padding:9px 12px;border:2px solid var(--ink);border-radius:8px;font-family:var(--ffb);font-size:.88rem;background:var(--white);cursor:pointer;outline:none;width:100%}
+.vl-eerr{font-size:.75rem;color:var(--pink);font-weight:600}
+.vl-ermv{width:34px;height:38px;background:none;border:2px solid var(--ink);border-radius:8px;cursor:pointer;font-size:1.1rem;color:var(--ink);transition:background .1s;flex-shrink:0}
+.vl-ermv:hover{background:var(--pink);border-color:var(--pink);color:var(--white)}
+.vl-eadd{align-self:flex-start;padding:6px 12px;border:2px dashed #aaa;border-radius:8px;font-family:var(--ffb);font-size:.8rem;font-weight:600;background:none;cursor:pointer;color:#777;transition:border-color .12s,color .12s}
+.vl-eadd:hover{border-color:var(--ink);color:var(--ink)}
+.vl-erad{display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid var(--ink);border-radius:8px;cursor:pointer;font-size:.86rem;font-weight:600;transition:background .12s;user-select:none}
+.vl-erad:has(input:checked){background:var(--lime)}
+.vl-erad input{accent-color:var(--ink);cursor:pointer}
+.vl-bsave{padding:10px 22px;border:2px solid var(--ink);border-radius:9px;font-family:var(--ffd);font-weight:700;font-size:.88rem;background:var(--lime);color:var(--ink);cursor:pointer;box-shadow:var(--sh);transition:transform .12s,box-shadow .12s}
+.vl-bsave:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
 
-            <!-- 分頁 -->
-            @if($vocabularies->hasPages())
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                    {{ $vocabularies->links() }}
-                </div>
-            @endif
-        </div>
+/* ── loading ── */
+.vl-topbar-load{position:fixed;top:0;left:0;width:100%;height:3px;z-index:9999;pointer-events:none;overflow:hidden;background:transparent}
+.vl-topbar-load::after{content:'';position:absolute;top:0;left:-70%;width:70%;height:100%;background:linear-gradient(90deg,transparent,var(--lime) 40%,var(--cyan) 60%,transparent);animation:vl-sweep 1.1s ease-in-out infinite}
+@keyframes vl-sweep{0%{left:-70%}100%{left:110%}}
+.vl-mask{position:absolute;inset:0;background:rgba(244,241,232,.78);z-index:20;display:flex;align-items:center;justify-content:center;border-radius:calc(var(--r) - 2px)}
+.vl-spin{border-radius:50%;animation:vl-rot .7s linear infinite}
+@keyframes vl-rot{to{transform:rotate(360deg)}}
+.vl-spin-lg{width:30px;height:30px;border:3px solid rgba(13,13,13,.12);border-top-color:var(--ink)}
+.vl-spin-sm{width:13px;height:13px;border:2px solid rgba(0,0,0,.2);border-top-color:currentColor;flex-shrink:0}
+[wire\:loading][wire\:target]{display:none}
+</style>
+
+<div class="vl-wrap">
+  <div wire:loading.delay class="vl-topbar-load"></div>
+  <div class="vl-deco" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <div class="vl-inner">
+
+    {{-- Header --}}
+    <div class="vl-hdr">
+      <div class="vl-hdr-l">
+        <h1 class="vl-title">詞彙<mark>列表</mark></h1>
+        <p class="vl-sub">管理您的多語言詞彙庫</p>
+      </div>
+      <a href="{{ route('vocabulary.create') }}" class="vl-btn-add">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        新增詞彙
+      </a>
     </div>
 
-    <!-- 改進的刪除確認彈窗 -->
-    @if($confirmingDelete && $deletingVocabulary)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-500 bg-opacity-75">
-            <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
-                <div class="flex items-center mb-4">
-                    <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-red-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <h3 class="mb-2 text-lg font-medium text-gray-900">確認刪除詞彙</h3>
-                    <div class="p-3 mb-4 rounded-lg bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">{{ $deletingVocabulary->english_word }}</div>
-                        <div class="text-sm text-gray-600">{{ $deletingVocabulary->chinese_word }}</div>
-                        @if($deletingVocabulary->is_important)
-                            <div class="flex items-center justify-center mt-1">
-                                <span class="text-sm text-amber-400">⭐ 重點詞彙</span>
-                            </div>
-                        @endif
-                    </div>
-                    <p class="mb-6 text-gray-600">
-                        您確定要刪除這個詞彙嗎？此操作無法撤銷。
-                    </p>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button wire:click="cancelDelete" class="px-4 py-2 font-medium text-gray-700 transition-colors bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        取消
-                    </button>
-                    <button wire:click="delete" class="px-4 py-2 font-medium text-white transition-colors bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        確認刪除
-                    </button>
-                </div>
-            </div>
-        </div>
+    {{-- Stats --}}
+    <div class="vl-stats">
+      <div class="vl-stat"><span class="vl-sicon">📚</span><span class="vl-slabel">總詞彙</span><span class="vl-sval">{{ $stats['total'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">⭐</span><span class="vl-slabel">重點詞彙</span><span class="vl-sval">{{ $stats['important'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">🇺🇸</span><span class="vl-slabel">英語詞彙</span><span class="vl-sval">{{ $stats['english'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">🇯🇵</span><span class="vl-slabel">日語詞彙</span><span class="vl-sval">{{ $stats['japanese'] }}</span></div>
+    </div>
+
+    {{-- Flash --}}
+    @if(session()->has('message'))
+    <div class="vl-flash">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      {{ session('message') }}
+    </div>
     @endif
+
+    {{-- Table card --}}
+    <div class="vl-card">
+      <div class="vl-tbar">
+        <div class="vl-tbar-t">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          詞彙管理
+        </div>
+        <div class="vl-tbar-c">
+          <div class="vl-sw">
+            <svg wire:loading.remove wire:target="search" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+            <span wire:loading wire:target="search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><span class="vl-spin vl-spin-sm" style="border-top-color:#999"></span></span>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="搜尋詞彙…" class="vl-sinput">
+          </div>
+          <select wire:model.live="languageFilter" class="vl-fsel">
+            <option value="">所有語言</option>
+            <option value="english">🇺🇸 英語</option>
+            <option value="japanese">🇯🇵 日語</option>
+          </select>
+          <select wire:model.live="importantFilter" class="vl-fsel">
+            <option value="">所有詞彙</option>
+            <option value="1">⭐ 重點</option>
+            <option value="0">一般</option>
+          </select>
+          <select wire:model.live="sortBy" class="vl-fsel">
+            <option value="newest">由新到舊</option>
+            <option value="oldest">由舊到新</option>
+            <option value="az">詞彙 A→Z</option>
+            <option value="za">詞彙 Z→A</option>
+          </select>
+          <select wire:model.live="perPage" class="vl-fsel">
+            <option value="10">10 筆</option>
+            <option value="20">20 筆</option>
+            <option value="50">50 筆</option>
+            <option value="100">100 筆</option>
+          </select>
+          @if($search || $languageFilter || $importantFilter)
+          <button wire:click="clearFilters" class="vl-bclear">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            清除
+          </button>
+          @endif
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;position:relative">
+        <div wire:loading.delay wire:target="gotoPage,previousPage,nextPage,clearFilters,toggleImportant,sortBy,languageFilter,importantFilter,search,perPage" class="vl-mask">
+          <div class="vl-spin vl-spin-lg"></div>
+        </div>
+        <table class="vl-table">
+          <thead>
+            <tr>
+              <th>重點</th><th>ID</th><th>語言</th><th>詞彙</th><th>中文意思</th>
+              <th>詞性</th><th>例句</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @forelse($vocabularies as $v)
+            <tr wire:key="vocab-{{ $v->id }}">
+              <td>
+                <button wire:click="toggleImportant({{ $v->id }})" class="vl-bstar">
+                  {{ $v->is_important ? '⭐' : '☆' }}
+                </button>
+              </td>
+              <td style="font-size:.78rem;color:#aaa;font-weight:600">{{ $v->id }}</td>
+              <td style="font-size:1.2rem">{{ $v->language_type === 'japanese' ? '🇯🇵' : '🇺🇸' }}</td>
+              <td><span class="vl-wrd">{{ $v->english_word }}</span></td>
+              <td>
+                @php $ms = is_array($v->chinese_word) ? $v->chinese_word : [$v->chinese_word]; @endphp
+                @if(count($ms)===1)
+                  <span class="vl-m1">{{ $ms[0] }}</span>
+                @else
+                  <div class="vl-mlist">
+                    @foreach($ms as $i=>$m)
+                      <span class="vl-mitem"><span class="vl-mnum">{{ $i+1 }}.</span>{{ $m }}</span>
+                    @endforeach
+                  </div>
+                @endif
+              </td>
+              <td>
+                @if($v->part_of_speech)
+                  @php $pl=['noun'=>'名詞','verb'=>'動詞','adjective'=>'形容詞','adverb'=>'副詞','phrase'=>'片語','preposition'=>'介系詞','conjunction'=>'連接詞','pronoun'=>'代名詞','particle'=>'助詞']; @endphp
+                  <span class="vl-pos vl-pos-{{ $v->part_of_speech }}">{{ $pl[$v->part_of_speech] ?? $v->part_of_speech }}</span>
+                @else
+                  <span style="color:#ccc">—</span>
+                @endif
+              </td>
+              <td>
+                @if($v->example_sentence)
+                  <div class="vl-exmain" title="{{ $v->example_sentence }}">{{ $v->example_sentence }}</div>
+                  @if($v->example_sentence_translation)
+                    <div class="vl-extrans" title="{{ $v->example_sentence_translation }}">{{ $v->example_sentence_translation }}</div>
+                  @endif
+                @else
+                  <span class="vl-noex">無例句</span>
+                @endif
+              </td>
+              <td>
+                <div class="vl-ag">
+                  <button wire:click="openEdit({{ $v->id }})" class="vl-ba" title="編輯">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  </button>
+                  <button wire:click="confirmDelete({{ $v->id }})" class="vl-ba vl-ba--del" title="刪除">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            @empty
+            <tr><td colspan="8">
+              <div class="vl-empty">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253z"/></svg>
+                <p class="vl-empty-t">暫無詞彙資料</p>
+                <p class="vl-empty-s">開始建立您的詞彙庫吧！</p>
+                <a href="{{ route('vocabulary.create') }}" class="vl-bempty">新增第一個詞彙</a>
+              </div>
+            </td></tr>
+            @endforelse
+          </tbody>
+        </table>
+      </div>
+
+      @if($vocabularies->hasPages())
+      <div class="vl-pagi" wire:key="pagi-{{ $vocabularies->currentPage() }}-{{ $vocabularies->lastPage() }}">{{ $vocabularies->links('vendor.pagination.custom') }}</div>
+      @endif
+    </div>
+
+  </div>
+
+  {{-- Edit modal --}}
+  @if($showEditModal)
+  <div class="vl-moverlay" wire:click.self="closeEdit">
+    <div class="vl-ebox" x-data x-init="$nextTick(() => $el.querySelector('[data-focus-first]').focus())" @keydown.enter.prevent="$wire.saveEdit()">
+      <div class="vl-ebox-hdr">
+        <span class="vl-ebox-ttl">編輯詞彙 <span style="color:#aaa;font-size:.8em">#{{ $editingId }}</span></span>
+        <button wire:click="closeEdit" class="vl-ebox-close">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="vl-ebox-body">
+        {{-- 語言類型 --}}
+        <div class="vl-ef">
+          <span class="vl-elabel">語言類型</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="english"> 🇺🇸 英語</label>
+            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="japanese"> 🇯🇵 日語</label>
+          </div>
+        </div>
+
+        {{-- 詞彙 --}}
+        <div class="vl-ef">
+          <label class="vl-elabel">詞彙 <span style="color:var(--pink)">*</span></label>
+          <input type="text" wire:model="editEnglishWord" class="vl-einput" placeholder="輸入詞彙">
+          @error('editEnglishWord')<span class="vl-eerr">{{ $message }}</span>@enderror
+        </div>
+
+        {{-- 中文意思 --}}
+        <div class="vl-ef">
+          <span class="vl-elabel">中文意思 <span style="color:var(--pink)">*</span></span>
+          @foreach($editChineseWords as $i => $w)
+          <div style="display:flex;gap:6px;margin-bottom:6px">
+            <input type="text" wire:model="editChineseWords.{{ $i }}" class="vl-einput" style="flex:1" placeholder="意思 {{ $i+1 }}" @if($i === 0) data-focus-first @endif>
+            @if(count($editChineseWords) > 1)
+            <button type="button" wire:click="removeEditMeaning({{ $i }})" class="vl-ermv">×</button>
+            @endif
+          </div>
+          @error('editChineseWords.'.$i)<span class="vl-eerr">{{ $message }}</span>@enderror
+          @endforeach
+          <button type="button" wire:click="addEditMeaning" class="vl-eadd">+ 新增意思</button>
+        </div>
+
+        {{-- 詞性 --}}
+        <div class="vl-ef">
+          <label class="vl-elabel">詞性</label>
+          <select wire:model="editPartOfSpeech" class="vl-esel">
+            <option value="">— 不指定 —</option>
+            <option value="noun">名詞</option>
+            <option value="verb">動詞</option>
+            <option value="adjective">形容詞</option>
+            <option value="adverb">副詞</option>
+            <option value="phrase">片語</option>
+            <option value="preposition">介系詞</option>
+            <option value="conjunction">連接詞</option>
+            <option value="pronoun">代名詞</option>
+            <option value="particle">助詞</option>
+          </select>
+        </div>
+
+        {{-- 例句 --}}
+        <div class="vl-ef">
+          <label class="vl-elabel">例句</label>
+          <input type="text" wire:model="editExampleSentence" class="vl-einput" placeholder="輸入例句">
+        </div>
+
+        {{-- 例句翻譯 --}}
+        <div class="vl-ef">
+          <label class="vl-elabel">例句翻譯</label>
+          <input type="text" wire:model="editExampleSentenceTranslation" class="vl-einput" placeholder="輸入例句翻譯">
+        </div>
+
+        {{-- 重點 --}}
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none">
+          <input type="checkbox" wire:model="editIsImportant" style="width:16px;height:16px;accent-color:var(--ink);cursor:pointer">
+          <span style="font-size:.88rem;font-weight:600">⭐ 標記為重點詞彙</span>
+        </label>
+      </div>
+
+      <div class="vl-ebox-ftr">
+        <button wire:click="closeEdit" class="vl-bcancel">取消</button>
+        <button wire:click="saveEdit" wire:loading.attr="disabled" wire:target="saveEdit" class="vl-bsave">
+          <span wire:loading.remove wire:target="saveEdit">儲存更新</span>
+          <span wire:loading.flex wire:target="saveEdit" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>儲存中…</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  @endif
+
+  {{-- Delete modal --}}
+  @if($confirmingDelete && $deletingVocabulary)
+  <div class="vl-moverlay">
+    <div class="vl-mbox">
+      <div class="vl-mico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
+      <h2 class="vl-mtitle">確認刪除？</h2>
+      <div class="vl-mprev">
+        <div class="vl-mprev-w">{{ $deletingVocabulary->english_word }}</div>
+        <div class="vl-mprev-m">{{ implode('、', is_array($deletingVocabulary->chinese_word) ? $deletingVocabulary->chinese_word : [$deletingVocabulary->chinese_word]) }}</div>
+        @if($deletingVocabulary->is_important)<div class="vl-mprev-s">⭐ 重點詞彙</div>@endif
+      </div>
+      <p class="vl-mtext">此操作無法撤銷。</p>
+      <div class="vl-macts">
+        <button wire:click="cancelDelete" class="vl-bcancel">取消</button>
+        <button wire:click="delete" wire:loading.attr="disabled" wire:target="delete" class="vl-bdel">
+          <span wire:loading.remove wire:target="delete">確認刪除</span>
+          <span wire:loading.flex wire:target="delete" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>刪除中…</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  @endif
+</div>
+<script>
+document.addEventListener('livewire:initialized', () => {
+    Livewire.hook('commit', ({ succeed }) => {
+        const y = window.scrollY;
+        succeed(() => { requestAnimationFrame(() => window.scrollTo(0, y)); });
+    });
+});
+</script>
 </div>
