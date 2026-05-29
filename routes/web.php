@@ -19,6 +19,14 @@ use Illuminate\Support\Facades\Route;
 
 
 
+// ── 語言切換 ──────────────────────────────────────────────────────
+Route::post('/language/{locale}', function (string $locale) {
+    if (in_array($locale, ['zh', 'ko', 'ja'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('language.switch');
+
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/vocabulary/create', CreateVocabularyComponent::class)->name('vocabulary.create');
     Route::get('/vocabulary/{id}/edit', CreateVocabularyComponent::class)->name('vocabulary.edit');

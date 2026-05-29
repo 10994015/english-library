@@ -1,8 +1,8 @@
 <div>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-.db-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--purple:#9333EA;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
+.db-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--purple:#9333EA;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans KR','Noto Sans JP','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
 
 .db-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .db-deco i{position:absolute;display:block;border-radius:3px}
@@ -115,8 +115,8 @@
     {{-- Header --}}
     <div class="db-hdr">
       <div>
-        <h1 class="db-title">學習<mark>統計資訊</mark></h1>
-        <p class="db-sub">追蹤你的進步，找出最需要加強的單字</p>
+        <h1 class="db-title">{{ __('app.dashboard.title_pre') }}<mark>{{ __('app.dashboard.title_hl') }}</mark></h1>
+        <p class="db-sub">{{ __('app.dashboard.subtitle') }}</p>
       </div>
     </div>
 
@@ -128,23 +128,23 @@
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </div>
           <div>
-            <div class="db-srs-ttl">間隔重複複習</div>
-            <div class="db-srs-desc">系統根據你的答題表現，安排今日需要複習的單字</div>
+            <div class="db-srs-ttl">{{ __('app.dashboard.srs_title') }}</div>
+            <div class="db-srs-desc">{{ __('app.dashboard.srs_desc') }}</div>
           </div>
         </div>
         <div style="text-align:center">
           <div class="db-srs-num">{{ $srsDueCount }}</div>
-          <div class="db-srs-unit">今日待複習</div>
+          <div class="db-srs-unit">{{ __('app.dashboard.srs_due') }}</div>
         </div>
         @if($srsDueCount > 0)
           <a href="{{ route('exam.srs') }}" class="db-btn-srs">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            開始複習
+            {{ __('app.dashboard.srs_start') }}
           </a>
         @else
           <div class="db-btn-srs-disabled">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            今日已完成！
+            {{ __('app.dashboard.srs_done') }}
           </div>
         @endif
       </div>
@@ -154,27 +154,27 @@
     <div class="db-stats">
       <div class="db-sc">
         <span class="db-sico">📊</span>
-        <span class="db-slabel">總答題數</span>
+        <span class="db-slabel">{{ __('app.dashboard.stat_answered') }}</span>
         <span class="db-sval">{{ number_format($totalAnswered) }}</span>
-        <span class="db-shint">今日 {{ $todayAnswered }} 題</span>
+        <span class="db-shint">{{ __('app.dashboard.stat_ans_hint', ['n' => $todayAnswered]) }}</span>
       </div>
       <div class="db-sc">
         <span class="db-sico">🎯</span>
-        <span class="db-slabel">整體正確率</span>
+        <span class="db-slabel">{{ __('app.dashboard.stat_pct') }}</span>
         <span class="db-sval">{{ $overallPct }}%</span>
-        <span class="db-shint">答對 {{ number_format($totalCorrect) }} 題</span>
+        <span class="db-shint">{{ __('app.dashboard.stat_pct_hint', ['n' => number_format($totalCorrect)]) }}</span>
       </div>
       <div class="db-sc">
         <span class="db-sico">🔥</span>
-        <span class="db-slabel">本週學習天數</span>
+        <span class="db-slabel">{{ __('app.dashboard.stat_days') }}</span>
         <span class="db-sval">{{ $weekDays }}/7</span>
-        <span class="db-shint">持續保持！</span>
+        <span class="db-shint">{{ __('app.dashboard.stat_days_hint') }}</span>
       </div>
       <div class="db-sc">
         <span class="db-sico">⏰</span>
-        <span class="db-slabel">待複習單字</span>
+        <span class="db-slabel">{{ __('app.dashboard.stat_due') }}</span>
         <span class="db-sval">{{ $srsDueCount }}</span>
-        <span class="db-shint">今日到期</span>
+        <span class="db-shint">{{ __('app.dashboard.stat_due_hint') }}</span>
       </div>
     </div>
 
@@ -185,7 +185,7 @@
       <div class="db-card">
         <div class="db-card-hdr">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
-          <span class="db-card-hdr-t">近 14 天正確率趨勢</span>
+          <span class="db-card-hdr-t">{{ __('app.dashboard.trend_title') }}</span>
         </div>
         <div class="db-card-body">
           @php
@@ -219,13 +219,13 @@
             <span><span class="db-chart-dot" style="background:var(--lime)"></span>≥80%</span>
             <span><span class="db-chart-dot" style="background:var(--cyan)"></span>50-79%</span>
             <span><span class="db-chart-dot" style="background:var(--pink)"></span>&lt;50%</span>
-            <span><span class="db-chart-dot" style="background:#eee;border-color:#ddd;border-style:dashed"></span>無答題</span>
+            <span><span class="db-chart-dot" style="background:#eee;border-color:#ddd;border-style:dashed"></span>{{ __('app.dashboard.legend_no_data') }}</span>
           </div>
           @else
           <div class="db-empty">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            <p class="db-empty-t">尚無答題紀錄</p>
-            <p class="db-empty-s">開始測驗後，這裡會顯示趨勢圖</p>
+            <p class="db-empty-t">{{ __('app.dashboard.no_data_t') }}</p>
+            <p class="db-empty-s">{{ __('app.dashboard.no_data_s') }}</p>
           </div>
           @endif
         </div>
@@ -235,24 +235,24 @@
       <div class="db-card">
         <div class="db-card-hdr">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          <span class="db-card-hdr-t">最常答錯 Top 10</span>
+          <span class="db-card-hdr-t">{{ __('app.dashboard.wrong_title') }}</span>
         </div>
 
         @if($wrongRanking->isEmpty())
         <div class="db-empty">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <p class="db-empty-t">目前沒有錯誤紀錄</p>
-          <p class="db-empty-s">完成測驗後會顯示錯誤排行</p>
+          <p class="db-empty-t">{{ __('app.dashboard.no_wrong_t') }}</p>
+          <p class="db-empty-s">{{ __('app.dashboard.no_wrong_s') }}</p>
         </div>
         @else
         <div style="overflow-x:auto">
           <table class="db-rank">
             <thead>
               <tr>
-                <th>#</th>
-                <th>單字</th>
-                <th>錯誤次數</th>
-                <th>最近錯誤</th>
+                <th>{{ __('app.dashboard.th_rank') }}</th>
+                <th>{{ __('app.dashboard.th_word') }}</th>
+                <th>{{ __('app.dashboard.th_wrong_count') }}</th>
+                <th>{{ __('app.dashboard.th_last_wrong') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -279,7 +279,7 @@
                 <td>
                   <span class="db-badge-wrong">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    {{ $row->wrong_count }} 次
+                    {{ __('app.dashboard.wrong_n', ['n' => $row->wrong_count]) }}
                   </span>
                 </td>
                 <td>

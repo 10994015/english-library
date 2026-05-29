@@ -1,8 +1,8 @@
 <div>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-.cv-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
+.cv-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans KR','Noto Sans JP','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
 
 .cv-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .cv-deco i{position:absolute;display:block;border-radius:3px}
@@ -131,16 +131,15 @@
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             @endif
           </span>
-          {{ $pageTitle }}
+          {{ $isEditing ? __('app.create.title_edit') : __('app.create.title_new') }}
         </h1>
         <p class="cv-sub">
-          @if($isEditing) Modify and enhance your vocabulary card
-          @else Add new words to enhance your language skills @endif
+          {{ $isEditing ? __('app.create.subtitle_edit') : __('app.create.subtitle_new') }}
         </p>
       </div>
       <a href="{{ route('vocabulary.index') }}" class="cv-btn-back">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        返回列表
+        {{ __('app.create.back') }}
       </a>
     </div>
 
@@ -156,7 +155,7 @@
     <div class="cv-card">
       <div class="cv-card-hdr">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-        <span class="cv-card-hdr-t">Vocabulary Card Details</span>
+        <span class="cv-card-hdr-t">{{ __('app.create.card_header') }}</span>
       </div>
 
       <form wire:submit.prevent="save" class="cv-form">
@@ -165,22 +164,23 @@
         <div class="cv-stripe">
           <div class="cv-stripe-grid">
             <div>
-              <label class="cv-label">語言類型 <span class="cv-req">*</span></label>
+              <label class="cv-label">{{ __('app.create.lang_type') }} <span class="cv-req">*</span></label>
               <select wire:model="language_type" class="cv-select">
-                <option value="english">🇺🇸 英語 (English)</option>
-                <option value="japanese">🇯🇵 日語 (Japanese)</option>
+                <option value="english">🇺🇸 {{ __('app.lang_names.english') }}</option>
+                <option value="japanese">🇯🇵 {{ __('app.lang_names.japanese') }}</option>
+                <option value="korean">🇰🇷 {{ __('app.lang_names.korean') }}</option>
               </select>
               @error('language_type')
               <p class="cv-err"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
               @enderror
             </div>
             <div>
-              <label class="cv-label">重點標記</label>
+              <label class="cv-label">{{ __('app.create.important_label') }}</label>
               <label class="cv-check-row">
                 <input type="checkbox" wire:model="is_important">
                 <span class="cv-check-lbl">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-                  標記為重點詞彙
+                  {{ __('app.create.important_check') }}
                 </span>
               </label>
             </div>
@@ -193,11 +193,13 @@
           {{-- Word --}}
           <div>
             <label class="cv-label">
-              @if($language_type === 'japanese') 日文詞彙 @else English Word @endif
+              @if($language_type === 'japanese') {{ __('app.create.word_ja') }}
+              @elseif($language_type === 'korean') {{ __('app.create.word_ko') }}
+              @else {{ __('app.create.word_en') }} @endif
               <span class="cv-req">*</span>
             </label>
             <input type="text" wire:model.blur="english_word" class="cv-input"
-              placeholder="@if($language_type === 'japanese') 輸入日文詞彙 @else Enter an English word @endif">
+              placeholder="@if($language_type === 'japanese'){{ __('app.create.word_ph_ja') }}@elseif($language_type === 'korean'){{ __('app.create.word_ph_ko') }}@else{{ __('app.create.word_ph_en') }}@endif">
             @error('english_word')
             <p class="cv-err"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
             @enderror
@@ -205,27 +207,37 @@
 
           {{-- POS --}}
           <div>
-            <label class="cv-label">Part of Speech</label>
+            <label class="cv-label">{{ __('app.create.pos_label') }}</label>
             <select wire:model="part_of_speech" class="cv-select">
-              <option value="">— 選擇詞性 —</option>
+              <option value="">{{ __('app.pos.unset') }}</option>
               @if($language_type === 'japanese')
-                <option value="noun">名詞 (Noun)</option>
-                <option value="verb">動詞 (Verb)</option>
-                <option value="adjective">形容詞 (Adjective)</option>
-                <option value="adverb">副詞 (Adverb)</option>
-                <option value="particle">助詞 (Particle)</option>
-                <option value="conjunction">接續詞 (Conjunction)</option>
-                <option value="interjection">感嘆詞 (Interjection)</option>
+                <option value="noun">{{ __('app.pos.noun') }}</option>
+                <option value="verb">{{ __('app.pos.verb') }}</option>
+                <option value="adjective">{{ __('app.pos.adjective') }}</option>
+                <option value="adverb">{{ __('app.pos.adverb') }}</option>
+                <option value="particle">{{ __('app.pos.particle') }}</option>
+                <option value="conjunction">{{ __('app.pos.conjunction') }}</option>
+                <option value="interjection">{{ __('app.pos.interjection') }}</option>
+              @elseif($language_type === 'korean')
+                <option value="noun">{{ __('app.pos.noun') }}</option>
+                <option value="verb">{{ __('app.pos.verb') }}</option>
+                <option value="adjective">{{ __('app.pos.adjective') }}</option>
+                <option value="adverb">{{ __('app.pos.adverb') }}</option>
+                <option value="particle">{{ __('app.pos.particle') }}</option>
+                <option value="conjunction">{{ __('app.pos.conjunction') }}</option>
+                <option value="pronoun">{{ __('app.pos.pronoun') }}</option>
+                <option value="interjection">{{ __('app.pos.interjection') }}</option>
+                <option value="phrase">{{ __('app.pos.phrase') }}</option>
               @else
-                <option value="noun">名詞 (Noun)</option>
-                <option value="verb">動詞 (Verb)</option>
-                <option value="adjective">形容詞 (Adjective)</option>
-                <option value="adverb">副詞 (Adverb)</option>
-                <option value="preposition">介系詞 (Preposition)</option>
-                <option value="conjunction">連接詞 (Conjunction)</option>
-                <option value="pronoun">代名詞 (Pronoun)</option>
-                <option value="interjection">感嘆詞 (Interjection)</option>
-                <option value="phrase">片語 (Phrase)</option>
+                <option value="noun">{{ __('app.pos.noun') }}</option>
+                <option value="verb">{{ __('app.pos.verb') }}</option>
+                <option value="adjective">{{ __('app.pos.adjective') }}</option>
+                <option value="adverb">{{ __('app.pos.adverb') }}</option>
+                <option value="preposition">{{ __('app.pos.preposition') }}</option>
+                <option value="conjunction">{{ __('app.pos.conjunction') }}</option>
+                <option value="pronoun">{{ __('app.pos.pronoun') }}</option>
+                <option value="interjection">{{ __('app.pos.interjection') }}</option>
+                <option value="phrase">{{ __('app.pos.phrase') }}</option>
               @endif
             </select>
           </div>
@@ -234,15 +246,15 @@
           <div class="cv-col2">
             <div class="cv-sec-title">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-              中文意思 <span class="cv-req">必填</span>
+              {{ __('app.create.meaning_section') }} <span class="cv-req">{{ __('app.create.meaning_req') }}</span>
             </div>
 
             @foreach($chinese_words as $i => $meaning)
             <div class="cv-mrow">
               <span class="cv-mnum">{{ $i + 1 }}</span>
-              <input type="text" wire:model.blur="chinese_words.{{ $i }}" class="cv-input" placeholder="輸入中文翻譯" style="flex:1">
+              <input type="text" wire:model.blur="chinese_words.{{ $i }}" class="cv-input" placeholder="{{ __('app.create.meaning_ph') }}" style="flex:1">
               @if(count($chinese_words) > 1)
-              <button type="button" wire:click="removeMeaning({{ $i }})" class="cv-brm" title="移除">
+              <button type="button" wire:click="removeMeaning({{ $i }})" class="cv-brm" title="{{ __('app.vocab.remove_btn_title') }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
               @endif
@@ -254,7 +266,7 @@
 
             <button type="button" wire:click="addMeaning" class="cv-badd-m">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-              新增另一個意思
+              {{ __('app.create.add_meaning') }}
             </button>
           </div>
 
@@ -269,10 +281,12 @@
           {{-- Example sentence --}}
           <div class="cv-col2">
             <label class="cv-label">
-              @if($language_type === 'japanese') 日文例句 @else Example Sentence @endif
+              @if($language_type === 'japanese') {{ __('app.create.example_ja') }}
+              @elseif($language_type === 'korean') {{ __('app.create.example_ko') }}
+              @else {{ __('app.create.example_en') }} @endif
             </label>
             <textarea wire:model.blur="example_sentence" rows="2" class="cv-textarea"
-              placeholder="@if($language_type === 'japanese') 輸入使用此詞彙的日文例句… @else Write an example sentence using this word… @endif"></textarea>
+              placeholder="@if($language_type === 'japanese'){{ __('app.create.example_ph_ja') }}@elseif($language_type === 'korean'){{ __('app.create.example_ph_ko') }}@else{{ __('app.create.example_ph_en') }}@endif"></textarea>
             @error('example_sentence')
             <p class="cv-err"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
             @enderror
@@ -280,8 +294,8 @@
 
           {{-- Translation --}}
           <div class="cv-col2">
-            <label class="cv-label">中文例句翻譯</label>
-            <textarea wire:model.blur="example_sentence_translation" rows="2" class="cv-textarea" placeholder="翻譯上方的例句…"></textarea>
+            <label class="cv-label">{{ __('app.create.example_trans') }}</label>
+            <textarea wire:model.blur="example_sentence_translation" rows="2" class="cv-textarea" placeholder="{{ __('app.create.example_trans_ph') }}"></textarea>
             @error('example_sentence_translation')
             <p class="cv-err"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p>
             @enderror
@@ -292,13 +306,13 @@
         <div class="cv-foot">
           <a href="{{ route('vocabulary.index') }}" class="cv-btn-cancel">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            取消
+            {{ __('app.create.cancel') }}
           </a>
           <button type="submit" class="cv-btn-save" wire:loading.attr="disabled" wire:target="save">
             <span wire:loading.remove wire:target="save"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></span>
             <span wire:loading wire:target="save" class="cv-spin cv-spin-sm"></span>
-            <span wire:loading.remove wire:target="save">{{ $buttonText }}</span>
-            <span wire:loading wire:target="save">儲存中…</span>
+            <span wire:loading.remove wire:target="save">{{ $isEditing ? __('app.create.btn_edit') : __('app.create.btn_new') }}</span>
+            <span wire:loading wire:target="save">{{ __('app.create.saving') }}</span>
           </button>
         </div>
 
@@ -311,8 +325,8 @@
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
       </div>
       <div>
-        <div class="cv-tip-t">學習小提示</div>
-        <p class="cv-tip-body">為詞彙添加例句能夠加深記憶，特別是當例句與你的日常生活相關聯時。嘗試自己思考例句，而不是直接從字典複製。記得標記重點詞彙以便日後複習！</p>
+        <div class="cv-tip-t">{{ __('app.create.tip_title') }}</div>
+        <p class="cv-tip-body">{{ __('app.create.tip_body') }}</p>
       </div>
     </div>
 

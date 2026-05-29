@@ -2,7 +2,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
 
-.vl-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
+.vl-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans KR','Noto Sans JP','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
 
 /* confetti */
 .vl-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
@@ -27,8 +27,9 @@
 .vl-btn-add svg{width:16px;height:16px;flex-shrink:0}
 
 /* stats */
-.vl-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:28px}
-@media(max-width:680px){.vl-stats{grid-template-columns:repeat(2,1fr)}}
+.vl-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:28px}
+@media(max-width:900px){.vl-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.vl-stats{grid-template-columns:repeat(2,1fr)}}
 .vl-stat{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);padding:17px 18px;display:flex;flex-direction:column;gap:4px;transition:transform .15s,box-shadow .15s}
 .vl-stat:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
 .vl-stat:nth-child(1){background:var(--lime)}
@@ -37,6 +38,8 @@
 .vl-stat:nth-child(3){background:var(--cyan)}
 .vl-stat:nth-child(4){background:var(--orange);color:var(--white)}
 .vl-stat:nth-child(4) .vl-slabel{color:rgba(255,255,255,.75)}
+.vl-stat:nth-child(5){background:#3B82F6;color:var(--white)}
+.vl-stat:nth-child(5) .vl-slabel{color:rgba(255,255,255,.75)}
 .vl-sicon{font-size:1.4rem;line-height:1}
 .vl-slabel{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#444}
 .vl-sval{font-family:var(--ffd);font-size:1.85rem;font-weight:800;line-height:1}
@@ -176,21 +179,22 @@
     {{-- Header --}}
     <div class="vl-hdr">
       <div class="vl-hdr-l">
-        <h1 class="vl-title">詞彙<mark>列表</mark></h1>
-        <p class="vl-sub">管理您的多語言詞彙庫</p>
+        <h1 class="vl-title">{{ __('app.vocab.title_pre') }}<mark>{{ __('app.vocab.title_hl') }}</mark></h1>
+        <p class="vl-sub">{{ __('app.vocab.subtitle') }}</p>
       </div>
       <a href="{{ route('vocabulary.create') }}" class="vl-btn-add">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-        新增詞彙
+        {{ __('app.vocab.add_btn') }}
       </a>
     </div>
 
     {{-- Stats --}}
     <div class="vl-stats">
-      <div class="vl-stat"><span class="vl-sicon">📚</span><span class="vl-slabel">總詞彙</span><span class="vl-sval">{{ $stats['total'] }}</span></div>
-      <div class="vl-stat"><span class="vl-sicon">⭐</span><span class="vl-slabel">重點詞彙</span><span class="vl-sval">{{ $stats['important'] }}</span></div>
-      <div class="vl-stat"><span class="vl-sicon">🇺🇸</span><span class="vl-slabel">英語詞彙</span><span class="vl-sval">{{ $stats['english'] }}</span></div>
-      <div class="vl-stat"><span class="vl-sicon">🇯🇵</span><span class="vl-slabel">日語詞彙</span><span class="vl-sval">{{ $stats['japanese'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">📚</span><span class="vl-slabel">{{ __('app.vocab.stat_total') }}</span><span class="vl-sval">{{ $stats['total'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">⭐</span><span class="vl-slabel">{{ __('app.vocab.stat_important') }}</span><span class="vl-sval">{{ $stats['important'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">🇺🇸</span><span class="vl-slabel">{{ __('app.vocab.stat_english') }}</span><span class="vl-sval">{{ $stats['english'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">🇯🇵</span><span class="vl-slabel">{{ __('app.vocab.stat_japanese') }}</span><span class="vl-sval">{{ $stats['japanese'] }}</span></div>
+      <div class="vl-stat"><span class="vl-sicon">🇰🇷</span><span class="vl-slabel">{{ __('app.vocab.stat_korean') }}</span><span class="vl-sval">{{ $stats['korean'] }}</span></div>
     </div>
 
     {{-- Flash --}}
@@ -206,40 +210,41 @@
       <div class="vl-tbar">
         <div class="vl-tbar-t">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-          詞彙管理
+          {{ __('app.vocab.manage') }}
         </div>
         <div class="vl-tbar-c">
           <div class="vl-sw">
             <svg wire:loading.remove wire:target="search" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
             <span wire:loading wire:target="search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><span class="vl-spin vl-spin-sm" style="border-top-color:#999"></span></span>
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="搜尋詞彙…" class="vl-sinput">
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('app.vocab.search_ph') }}" class="vl-sinput">
           </div>
           <select wire:model.live="languageFilter" class="vl-fsel">
-            <option value="">所有語言</option>
-            <option value="english">🇺🇸 英語</option>
-            <option value="japanese">🇯🇵 日語</option>
+            <option value="">{{ __('app.vocab.all_lang') }}</option>
+            <option value="english">🇺🇸 {{ __('app.vocab.lang_en') }}</option>
+            <option value="japanese">🇯🇵 {{ __('app.vocab.lang_ja') }}</option>
+            <option value="korean">🇰🇷 {{ __('app.vocab.lang_ko') }}</option>
           </select>
           <select wire:model.live="importantFilter" class="vl-fsel">
-            <option value="">所有詞彙</option>
-            <option value="1">⭐ 重點</option>
-            <option value="0">一般</option>
+            <option value="">{{ __('app.vocab.all_items') }}</option>
+            <option value="1">{{ __('app.vocab.important_only') }}</option>
+            <option value="0">{{ __('app.vocab.normal_only') }}</option>
           </select>
           <select wire:model.live="sortBy" class="vl-fsel">
-            <option value="newest">由新到舊</option>
-            <option value="oldest">由舊到新</option>
-            <option value="az">詞彙 A→Z</option>
-            <option value="za">詞彙 Z→A</option>
+            <option value="newest">{{ __('app.vocab.sort_newest') }}</option>
+            <option value="oldest">{{ __('app.vocab.sort_oldest') }}</option>
+            <option value="az">{{ __('app.vocab.sort_az') }}</option>
+            <option value="za">{{ __('app.vocab.sort_za') }}</option>
           </select>
           <select wire:model.live="perPage" class="vl-fsel">
-            <option value="10">10 筆</option>
-            <option value="20">20 筆</option>
-            <option value="50">50 筆</option>
-            <option value="100">100 筆</option>
+            <option value="10">10 {{ __('app.common.per_page_unit') }}</option>
+            <option value="20">20 {{ __('app.common.per_page_unit') }}</option>
+            <option value="50">50 {{ __('app.common.per_page_unit') }}</option>
+            <option value="100">100 {{ __('app.common.per_page_unit') }}</option>
           </select>
           @if($search || $languageFilter || $importantFilter)
           <button wire:click="clearFilters" class="vl-bclear">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            清除
+            {{ __('app.common.clear') }}
           </button>
           @endif
         </div>
@@ -252,8 +257,14 @@
         <table class="vl-table">
           <thead>
             <tr>
-              <th>重點</th><th>ID</th><th>語言</th><th>詞彙</th><th>中文意思</th>
-              <th>詞性</th><th>例句</th><th></th>
+              <th>{{ __('app.vocab.th_important') }}</th>
+              <th>{{ __('app.vocab.th_id') }}</th>
+              <th>{{ __('app.vocab.th_lang') }}</th>
+              <th>{{ __('app.vocab.th_word') }}</th>
+              <th>{{ __('app.vocab.th_meaning') }}</th>
+              <th>{{ __('app.vocab.th_pos') }}</th>
+              <th>{{ __('app.vocab.th_example') }}</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -265,7 +276,11 @@
                 </button>
               </td>
               <td style="font-size:.78rem;color:#aaa;font-weight:600">{{ $v->id }}</td>
-              <td style="font-size:1.2rem">{{ $v->language_type === 'japanese' ? '🇯🇵' : '🇺🇸' }}</td>
+              <td style="font-size:1.2rem">
+                @if($v->language_type === 'japanese') 🇯🇵
+                @elseif($v->language_type === 'korean') 🇰🇷
+                @else 🇺🇸 @endif
+              </td>
               <td><span class="vl-wrd">{{ $v->english_word }}</span></td>
               <td>
                 @php $ms = is_array($v->chinese_word) ? $v->chinese_word : [$v->chinese_word]; @endphp
@@ -281,8 +296,7 @@
               </td>
               <td>
                 @if($v->part_of_speech)
-                  @php $pl=['noun'=>'名詞','verb'=>'動詞','adjective'=>'形容詞','adverb'=>'副詞','phrase'=>'片語','preposition'=>'介系詞','conjunction'=>'連接詞','pronoun'=>'代名詞','particle'=>'助詞']; @endphp
-                  <span class="vl-pos vl-pos-{{ $v->part_of_speech }}">{{ $pl[$v->part_of_speech] ?? $v->part_of_speech }}</span>
+                  <span class="vl-pos vl-pos-{{ $v->part_of_speech }}">{{ __('app.pos.' . $v->part_of_speech, [], null) ?: $v->part_of_speech }}</span>
                 @else
                   <span style="color:#ccc">—</span>
                 @endif
@@ -294,15 +308,15 @@
                     <div class="vl-extrans" title="{{ $v->example_sentence_translation }}">{{ $v->example_sentence_translation }}</div>
                   @endif
                 @else
-                  <span class="vl-noex">無例句</span>
+                  <span class="vl-noex">{{ __('app.vocab.no_example') }}</span>
                 @endif
               </td>
               <td>
                 <div class="vl-ag">
-                  <button wire:click="openEdit({{ $v->id }})" class="vl-ba" title="編輯">
+                  <button wire:click="openEdit({{ $v->id }})" class="vl-ba" title="{{ __('app.common.edit') }}">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                   </button>
-                  <button wire:click="confirmDelete({{ $v->id }})" class="vl-ba vl-ba--del" title="刪除">
+                  <button wire:click="confirmDelete({{ $v->id }})" class="vl-ba vl-ba--del" title="{{ __('app.common.delete') }}">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                   </button>
                 </div>
@@ -312,9 +326,9 @@
             <tr><td colspan="8">
               <div class="vl-empty">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253z"/></svg>
-                <p class="vl-empty-t">暫無詞彙資料</p>
-                <p class="vl-empty-s">開始建立您的詞彙庫吧！</p>
-                <a href="{{ route('vocabulary.create') }}" class="vl-bempty">新增第一個詞彙</a>
+                <p class="vl-empty-t">{{ __('app.vocab.empty_t') }}</p>
+                <p class="vl-empty-s">{{ __('app.vocab.empty_s') }}</p>
+                <a href="{{ route('vocabulary.create') }}" class="vl-bempty">{{ __('app.vocab.add_first') }}</a>
               </div>
             </td></tr>
             @endforelse
@@ -334,7 +348,7 @@
   <div class="vl-moverlay" wire:click.self="closeEdit">
     <div class="vl-ebox" x-data x-init="$nextTick(() => $el.querySelector('[data-focus-first]').focus())" @keydown.enter.prevent="$wire.saveEdit()">
       <div class="vl-ebox-hdr">
-        <span class="vl-ebox-ttl">編輯詞彙 <span style="color:#aaa;font-size:.8em">#{{ $editingId }}</span></span>
+        <span class="vl-ebox-ttl">{{ __('app.vocab.edit_title') }} <span style="color:#aaa;font-size:.8em">#{{ $editingId }}</span></span>
         <button wire:click="closeEdit" class="vl-ebox-close">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -343,76 +357,77 @@
       <div class="vl-ebox-body">
         {{-- 語言類型 --}}
         <div class="vl-ef">
-          <span class="vl-elabel">語言類型</span>
+          <span class="vl-elabel">{{ __('app.vocab.lang_type') }}</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="english"> 🇺🇸 英語</label>
-            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="japanese"> 🇯🇵 日語</label>
+            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="english"> 🇺🇸 {{ __('app.lang_names.english') }}</label>
+            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="japanese"> 🇯🇵 {{ __('app.lang_names.japanese') }}</label>
+            <label class="vl-erad"><input type="radio" wire:model="editLanguageType" value="korean"> 🇰🇷 {{ __('app.lang_names.korean') }}</label>
           </div>
         </div>
 
         {{-- 詞彙 --}}
         <div class="vl-ef">
-          <label class="vl-elabel">詞彙 <span style="color:var(--pink)">*</span></label>
-          <input type="text" wire:model="editEnglishWord" class="vl-einput" placeholder="輸入詞彙">
+          <label class="vl-elabel">{{ __('app.vocab.word_label') }} <span style="color:var(--pink)">*</span></label>
+          <input type="text" wire:model="editEnglishWord" class="vl-einput" placeholder="{{ __('app.vocab.word_label') }}">
           @error('editEnglishWord')<span class="vl-eerr">{{ $message }}</span>@enderror
         </div>
 
         {{-- 中文意思 --}}
         <div class="vl-ef">
-          <span class="vl-elabel">中文意思 <span style="color:var(--pink)">*</span></span>
+          <span class="vl-elabel">{{ __('app.vocab.meaning_label') }} <span style="color:var(--pink)">*</span></span>
           @foreach($editChineseWords as $i => $w)
           <div style="display:flex;gap:6px;margin-bottom:6px">
-            <input type="text" wire:model="editChineseWords.{{ $i }}" class="vl-einput" style="flex:1" placeholder="意思 {{ $i+1 }}" @if($i === 0) data-focus-first @endif>
+            <input type="text" wire:model="editChineseWords.{{ $i }}" class="vl-einput" style="flex:1" placeholder="{{ __('app.vocab.meaning_ph', ['n' => $i + 1]) }}" @if($i === 0) data-focus-first @endif>
             @if(count($editChineseWords) > 1)
             <button type="button" wire:click="removeEditMeaning({{ $i }})" class="vl-ermv">×</button>
             @endif
           </div>
           @error('editChineseWords.'.$i)<span class="vl-eerr">{{ $message }}</span>@enderror
           @endforeach
-          <button type="button" wire:click="addEditMeaning" class="vl-eadd">+ 新增意思</button>
+          <button type="button" wire:click="addEditMeaning" class="vl-eadd">{{ __('app.vocab.add_meaning_btn') }}</button>
         </div>
 
         {{-- 詞性 --}}
         <div class="vl-ef">
-          <label class="vl-elabel">詞性</label>
+          <label class="vl-elabel">{{ __('app.vocab.pos_label') }}</label>
           <select wire:model="editPartOfSpeech" class="vl-esel">
-            <option value="">— 不指定 —</option>
-            <option value="noun">名詞</option>
-            <option value="verb">動詞</option>
-            <option value="adjective">形容詞</option>
-            <option value="adverb">副詞</option>
-            <option value="phrase">片語</option>
-            <option value="preposition">介系詞</option>
-            <option value="conjunction">連接詞</option>
-            <option value="pronoun">代名詞</option>
-            <option value="particle">助詞</option>
+            <option value="">{{ __('app.pos.unset') }}</option>
+            <option value="noun">{{ __('app.pos.noun') }}</option>
+            <option value="verb">{{ __('app.pos.verb') }}</option>
+            <option value="adjective">{{ __('app.pos.adjective') }}</option>
+            <option value="adverb">{{ __('app.pos.adverb') }}</option>
+            <option value="phrase">{{ __('app.pos.phrase') }}</option>
+            <option value="preposition">{{ __('app.pos.preposition') }}</option>
+            <option value="conjunction">{{ __('app.pos.conjunction') }}</option>
+            <option value="pronoun">{{ __('app.pos.pronoun') }}</option>
+            <option value="particle">{{ __('app.pos.particle') }}</option>
           </select>
         </div>
 
         {{-- 例句 --}}
         <div class="vl-ef">
-          <label class="vl-elabel">例句</label>
-          <input type="text" wire:model="editExampleSentence" class="vl-einput" placeholder="輸入例句">
+          <label class="vl-elabel">{{ __('app.vocab.example_label') }}</label>
+          <input type="text" wire:model="editExampleSentence" class="vl-einput" placeholder="{{ __('app.vocab.example_label') }}">
         </div>
 
         {{-- 例句翻譯 --}}
         <div class="vl-ef">
-          <label class="vl-elabel">例句翻譯</label>
-          <input type="text" wire:model="editExampleSentenceTranslation" class="vl-einput" placeholder="輸入例句翻譯">
+          <label class="vl-elabel">{{ __('app.vocab.ex_trans_label') }}</label>
+          <input type="text" wire:model="editExampleSentenceTranslation" class="vl-einput" placeholder="{{ __('app.vocab.ex_trans_label') }}">
         </div>
 
         {{-- 重點 --}}
         <label style="display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none">
           <input type="checkbox" wire:model="editIsImportant" style="width:16px;height:16px;accent-color:var(--ink);cursor:pointer">
-          <span style="font-size:.88rem;font-weight:600">⭐ 標記為重點詞彙</span>
+          <span style="font-size:.88rem;font-weight:600">{{ __('app.vocab.important_mark') }}</span>
         </label>
       </div>
 
       <div class="vl-ebox-ftr">
-        <button wire:click="closeEdit" class="vl-bcancel">取消</button>
+        <button wire:click="closeEdit" class="vl-bcancel">{{ __('app.common.cancel') }}</button>
         <button wire:click="saveEdit" wire:loading.attr="disabled" wire:target="saveEdit" class="vl-bsave">
-          <span wire:loading.remove wire:target="saveEdit">儲存更新</span>
-          <span wire:loading.flex wire:target="saveEdit" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>儲存中…</span>
+          <span wire:loading.remove wire:target="saveEdit">{{ __('app.common.save') }}</span>
+          <span wire:loading.flex wire:target="saveEdit" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>{{ __('app.common.saving') }}</span>
         </button>
       </div>
     </div>
@@ -424,18 +439,18 @@
   <div class="vl-moverlay">
     <div class="vl-mbox">
       <div class="vl-mico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
-      <h2 class="vl-mtitle">確認刪除？</h2>
+      <h2 class="vl-mtitle">{{ __('app.vocab.confirm_delete') }}</h2>
       <div class="vl-mprev">
         <div class="vl-mprev-w">{{ $deletingVocabulary->english_word }}</div>
         <div class="vl-mprev-m">{{ implode('、', is_array($deletingVocabulary->chinese_word) ? $deletingVocabulary->chinese_word : [$deletingVocabulary->chinese_word]) }}</div>
-        @if($deletingVocabulary->is_important)<div class="vl-mprev-s">⭐ 重點詞彙</div>@endif
+        @if($deletingVocabulary->is_important)<div class="vl-mprev-s">{{ __('app.vocab.important_mark') }}</div>@endif
       </div>
-      <p class="vl-mtext">此操作無法撤銷。</p>
+      <p class="vl-mtext">{{ __('app.vocab.cannot_undo') }}</p>
       <div class="vl-macts">
-        <button wire:click="cancelDelete" class="vl-bcancel">取消</button>
+        <button wire:click="cancelDelete" class="vl-bcancel">{{ __('app.common.cancel') }}</button>
         <button wire:click="delete" wire:loading.attr="disabled" wire:target="delete" class="vl-bdel">
-          <span wire:loading.remove wire:target="delete">確認刪除</span>
-          <span wire:loading.flex wire:target="delete" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>刪除中…</span>
+          <span wire:loading.remove wire:target="delete">{{ __('app.vocab.confirm_del_btn') }}</span>
+          <span wire:loading.flex wire:target="delete" style="align-items:center;gap:6px"><span class="vl-spin vl-spin-sm"></span>{{ __('app.common.deleting') }}</span>
         </button>
       </div>
     </div>

@@ -30,7 +30,7 @@ class CreateVocabularyComponent extends Component
             'example_sentence'              => 'nullable|string|max:255',
             'example_sentence_translation'  => 'nullable|string|max:255',
             'is_important'                  => 'boolean',
-            'language_type'                 => 'required|string|in:english,japanese',
+            'language_type'                 => 'required|string|in:english,japanese,korean',
         ];
     }
 
@@ -84,7 +84,7 @@ class CreateVocabularyComponent extends Component
         ));
 
         if (empty($meanings)) {
-            $this->addError('chinese_words.0', '請至少輸入一個中文意思');
+            $this->addError('chinese_words.0', __('app.common.min_one_meaning'));
             return;
         }
 
@@ -104,15 +104,15 @@ class CreateVocabularyComponent extends Component
             $vocabulary = Vocabulary::find($this->vocabulary_id);
 
             if ($vocabulary->user_id !== $userId) {
-                session()->flash('error', '您沒有權限編輯此詞彙！');
+                session()->flash('error', __('app.vocab.cannot_undo'));
                 return;
             }
 
             $vocabulary->update($data);
-            session()->flash('message', '詞彙已成功更新！');
+            session()->flash('message', __('app.vocab.saved'));
         } else {
             Vocabulary::create(array_merge($data, ['user_id' => $userId]));
-            session()->flash('message', '詞彙已成功添加！');
+            session()->flash('message', __('app.vocab.flash_added'));
         }
     }
 

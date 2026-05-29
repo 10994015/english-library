@@ -3,17 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? '詞彙學習系統' }}</title>
+    <title>{{ $title ?? __('app.nav.brand') . __('app.nav.brand_hl') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root{
             --lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;
             --ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;
             --sh:4px 4px 0 #0D0D0D;--r:14px;
-            --ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;
+            --ffd:'Syne',sans-serif;
+            --ffb:'DM Sans','Noto Sans KR','Noto Sans JP','Noto Sans TC',sans-serif;
         }
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         body{font-family:var(--ffb);background:var(--cream);min-height:100vh}
@@ -37,18 +38,31 @@
         .nav-link.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}
         .nav-link.active:hover{background:#b8e020}
 
-        /* User area */
-        .nav-user{display:flex;align-items:center;gap:8px;flex-shrink:0}
+        /* User + Lang area */
+        .nav-user{display:flex;align-items:center;gap:6px;flex-shrink:0}
         .nav-avatar{width:34px;height:34px;background:var(--cyan);border:2px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ffd);font-size:.82rem;font-weight:800;color:var(--ink);cursor:pointer;transition:border-color .12s,transform .12s;flex-shrink:0;user-select:none}
         .nav-avatar:hover{border-color:var(--white);transform:scale(1.06)}
 
-        /* Dropdown */
+        /* Dropdown (user) */
         .nav-dd{position:relative}
         .nav-dd-menu{display:none;position:absolute;right:0;top:calc(100% + 10px);background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);min-width:170px;overflow:hidden;z-index:100}
         .nav-dd-menu.open{display:block}
         .nav-dd-name{padding:9px 13px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;border-bottom:1.5px solid #eee}
         .nav-dd-btn{width:100%;text-align:left;background:none;border:none;padding:9px 13px;font-family:var(--ffb);font-size:.86rem;font-weight:500;color:var(--ink);cursor:pointer;transition:background .1s;display:block}
         .nav-dd-btn:hover{background:var(--cream)}
+
+        /* ── Language Switcher ── */
+        .nav-lang{position:relative}
+        .nav-lang-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1.5px solid rgba(255,255,255,.25);border-radius:8px;background:transparent;color:rgba(255,255,255,.75);font-family:var(--ffb);font-size:.8rem;font-weight:600;cursor:pointer;transition:border-color .12s,color .12s,background .12s;white-space:nowrap}
+        .nav-lang-btn:hover{border-color:rgba(255,255,255,.6);color:var(--white);background:rgba(255,255,255,.07)}
+        .nav-lang-btn svg{width:13px;height:13px;flex-shrink:0;opacity:.7}
+        .nav-lang-globe{width:15px;height:15px;flex-shrink:0}
+        .nav-lang-drop{display:none;position:absolute;right:0;top:calc(100% + 8px);background:var(--white);border:2px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;z-index:101;min-width:130px}
+        .nav-lang-drop.open{display:block}
+        .nav-lang-item{display:flex;align-items:center;gap:8px;width:100%;padding:9px 13px;background:none;border:none;font-family:var(--ffb);font-size:.86rem;font-weight:500;color:var(--ink);cursor:pointer;transition:background .1s;text-align:left}
+        .nav-lang-item:hover{background:var(--cream)}
+        .nav-lang-item.active{background:var(--lime);font-weight:700}
+        .nav-lang-item .flag{font-size:1rem}
 
         /* Auth buttons */
         .nav-btn-login{display:inline-flex;align-items:center;padding:7px 15px;border:1.5px solid rgba(255,255,255,.3);border-radius:8px;font-family:var(--ffb);font-size:.84rem;font-weight:600;color:rgba(255,255,255,.75);text-decoration:none;transition:border-color .12s,color .12s}
@@ -72,11 +86,19 @@
         .nav-mob-link svg{width:15px;height:15px;flex-shrink:0}
         .nav-mob-link:hover{background:rgba(255,255,255,.1);color:var(--white)}
         .nav-mob-link.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+        /* Mobile lang switcher row */
+        .nav-mob-lang{display:flex;gap:6px;padding:8px 13px}
+        .nav-mob-lang form{flex:1}
+        .nav-mob-lang-btn{width:100%;padding:8px 6px;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;background:transparent;color:rgba(255,255,255,.65);font-family:var(--ffb);font-size:.82rem;font-weight:600;cursor:pointer;transition:background .12s,color .12s,border-color .12s;text-align:center}
+        .nav-mob-lang-btn:hover{background:rgba(255,255,255,.1);color:var(--white);border-color:rgba(255,255,255,.5)}
+        .nav-mob-lang-btn.active{background:var(--lime);color:var(--ink);border-color:var(--lime)}
 
         .main-wrap{min-height:calc(100vh - 64px - 85px)}
     </style>
 </head>
 <body>
+
+@php $currentLocale = app()->getLocale(); @endphp
 
 <nav class="nav">
     <div class="nav-inner">
@@ -85,38 +107,30 @@
             <div class="nav-logo-icon">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             </div>
-            <span class="nav-logo-text">詞彙<span>學習</span></span>
+            <span class="nav-logo-text">{{ __('app.nav.brand') }}<span>{{ __('app.nav.brand_hl') }}</span></span>
         </a>
 
         <div class="nav-links">
-            {{-- Dashboard 連結 --}}
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                統計資訊
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                {{ __('app.nav.stats') }}
             </a>
-
-
             <a href="{{ route('vocabulary.index') }}" class="nav-link {{ request()->routeIs('vocabulary.index') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                詞彙列表
+                {{ __('app.nav.vocabulary') }}
             </a>
             <a href="{{ route('vocabulary.create') }}" class="nav-link {{ request()->routeIs('vocabulary.create') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                新增詞彙
+                {{ __('app.nav.add') }}
             </a>
             <a href="{{ route('exam') }}" class="nav-link {{ request()->routeIs('exam') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                測驗中心
+                {{ __('app.nav.exam') }}
             </a>
-              {{-- SRS 複習按鈕（有數字紅點）--}}
             @auth
             <a href="{{ route('exam.srs') }}" class="nav-link" style="position:relative">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                今日複習
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                {{ __('app.nav.review') }}
                 @php
                     $srsDue = \App\Models\ExamResult::where('user_id', auth()->id())
                         ->where('is_correct', false)
@@ -134,9 +148,43 @@
         </div>
 
         <div class="nav-user">
+
+            {{-- ── Language Switcher ── --}}
+            <div class="nav-lang" id="navLangDd">
+                <button type="button" class="nav-lang-btn" onclick="toggleLangDd()" title="{{ __('app.nav.lang_label') }}">
+                    <svg class="nav-lang-globe" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                    </svg>
+                    @if($currentLocale === 'ko') 한국어
+                    @elseif($currentLocale === 'ja') 日本語
+                    @else 繁中 @endif
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+                </button>
+                <div class="nav-lang-drop" id="navLangMenu">
+                    <form method="POST" action="{{ route('language.switch', 'zh') }}">
+                        @csrf
+                        <button type="submit" class="nav-lang-item {{ $currentLocale==='zh' ? 'active' : '' }}">
+                            <span class="flag">🇹🇼</span> 繁中
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('language.switch', 'ko') }}">
+                        @csrf
+                        <button type="submit" class="nav-lang-item {{ $currentLocale==='ko' ? 'active' : '' }}">
+                            <span class="flag">🇰🇷</span> 한국어
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('language.switch', 'ja') }}">
+                        @csrf
+                        <button type="submit" class="nav-lang-item {{ $currentLocale==='ja' ? 'active' : '' }}">
+                            <span class="flag">🇯🇵</span> 日本語
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             @guest
-                <a href="{{ route('login') }}" class="nav-btn-login">登入</a>
-                <a href="{{ route('register') }}" class="nav-btn-register">註冊</a>
+                <a href="{{ route('login') }}" class="nav-btn-login">{{ __('app.nav.login') }}</a>
+                <a href="{{ route('register') }}" class="nav-btn-register">{{ __('app.nav.register') }}</a>
             @else
                 <div class="nav-dd" id="navDd">
                     <div class="nav-avatar" onclick="toggleNavDd()" title="{{ Auth::user()->name }}">
@@ -146,7 +194,7 @@
                         <div class="nav-dd-name">{{ Auth::user()->name }}</div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="nav-dd-btn">登出</button>
+                            <button type="submit" class="nav-dd-btn">{{ __('app.nav.logout') }}</button>
                         </form>
                     </div>
                 </div>
@@ -165,16 +213,31 @@
     <div class="nav-mob-inner">
         <a href="{{ route('vocabulary.index') }}" class="nav-mob-link {{ request()->routeIs('vocabulary.index') ? 'active' : '' }}">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            詞彙列表
+            {{ __('app.nav.vocabulary') }}
         </a>
         <a href="{{ route('vocabulary.create') }}" class="nav-mob-link {{ request()->routeIs('vocabulary.create') ? 'active' : '' }}">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            新增詞彙
+            {{ __('app.nav.add') }}
         </a>
         <a href="{{ route('exam') }}" class="nav-mob-link {{ request()->routeIs('exam') ? 'active' : '' }}">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            測驗中心
+            {{ __('app.nav.exam') }}
         </a>
+        {{-- 行動版語言切換 --}}
+        <div class="nav-mob-lang">
+            <form method="POST" action="{{ route('language.switch', 'zh') }}">
+                @csrf
+                <button type="submit" class="nav-mob-lang-btn {{ $currentLocale==='zh' ? 'active' : '' }}">🇹🇼 繁中</button>
+            </form>
+            <form method="POST" action="{{ route('language.switch', 'ko') }}">
+                @csrf
+                <button type="submit" class="nav-mob-lang-btn {{ $currentLocale==='ko' ? 'active' : '' }}">🇰🇷 한국어</button>
+            </form>
+            <form method="POST" action="{{ route('language.switch', 'ja') }}">
+                @csrf
+                <button type="submit" class="nav-mob-lang-btn {{ $currentLocale==='ja' ? 'active' : '' }}">🇯🇵 日本語</button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -188,9 +251,8 @@
             <div style="width:30px;height:30px;background:var(--lime);border:1.5px solid rgba(255,255,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
                 <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#0D0D0D"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             </div>
-            <span style="font-family:var(--ffd);font-size:.95rem;font-weight:800;color:var(--white);letter-spacing:-.01em">詞彙<span style="color:var(--lime)">學習</span></span>
+            <span style="font-family:var(--ffd);font-size:.95rem;font-weight:800;color:var(--white);letter-spacing:-.01em">{{ __('app.nav.brand') }}<span style="color:var(--lime)">{{ __('app.nav.brand_hl') }}</span></span>
         </a>
-
         <p style="font-family:var(--ffd);font-size:.75rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase">
             &copy; {{ date('Y') }} NOBILEE &mdash; All Rights Reserved
         </p>
@@ -205,6 +267,9 @@
 function toggleNavDd(){
     document.getElementById('navDdMenu').classList.toggle('open');
 }
+function toggleLangDd(){
+    document.getElementById('navLangMenu').classList.toggle('open');
+}
 function toggleNavMob(){
     const m=document.getElementById('navMobMenu');
     const o=document.getElementById('navMobOpen');
@@ -217,6 +282,10 @@ document.addEventListener('click',function(e){
     const dd=document.getElementById('navDd');
     if(dd&&!dd.contains(e.target)){
         document.getElementById('navDdMenu')?.classList.remove('open');
+    }
+    const ld=document.getElementById('navLangDd');
+    if(ld&&!ld.contains(e.target)){
+        document.getElementById('navLangMenu')?.classList.remove('open');
     }
 });
 </script>

@@ -147,13 +147,13 @@ class ExamComponent extends Component
         $this->resetExam();
 
         if (count($this->allVocabularies) == 0) {
-            $msg = $this->srsMode ? '今日沒有需要複習的單字！' : "根據目前的篩選條件，沒有找到可用的詞彙！";
+            $msg = $this->srsMode ? __('app.exam.err_srs_empty') : __('app.exam.err_no_vocab');
             session()->flash('error', $msg);
             return;
         }
 
         if (!$this->allowRepeat && count($this->allVocabularies) < $this->questionCount && $this->questionCount != 0) {
-            session()->flash('error', "詞彙不足以進行 {$this->questionCount} 題不重複測驗！");
+            session()->flash('error', __('app.exam.err_insufficient', ['n' => $this->questionCount]));
             return;
         }
 
@@ -384,18 +384,9 @@ class ExamComponent extends Component
 
     public function getLanguageDisplayName($languageType)
     {
-        return [
-            'english'    => '英語',
-            'japanese'   => '日語',
-            'korean'     => '韓語',
-            'spanish'    => '西班牙語',
-            'french'     => '法語',
-            'german'     => '德語',
-            'italian'    => '義大利語',
-            'portuguese' => '葡萄牙語',
-            'russian'    => '俄語',
-            'arabic'     => '阿拉伯語',
-        ][$languageType] ?? ucfirst($languageType);
+        $key = 'app.lang_names.' . $languageType;
+        $translated = __($key);
+        return $translated !== $key ? $translated : ucfirst($languageType);
     }
 
     public function render()

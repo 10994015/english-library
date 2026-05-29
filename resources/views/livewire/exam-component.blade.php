@@ -1,8 +1,8 @@
 <div>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-.ex-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--purple:#9333EA;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
+.ex-wrap{--lime:#C8F135;--pink:#FF3E8A;--cyan:#00D4FF;--orange:#FF6B2B;--purple:#9333EA;--ink:#0D0D0D;--white:#fff;--cream:#F4F1E8;--sh:4px 4px 0 #0D0D0D;--sh-lg:6px 6px 0 #0D0D0D;--r:14px;--ffd:'Syne',sans-serif;--ffb:'DM Sans','Noto Sans KR','Noto Sans JP','Noto Sans TC',sans-serif;font-family:var(--ffb);background:var(--cream);min-height:100vh;padding:44px 32px;position:relative;overflow-x:hidden}
 
 .ex-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .ex-deco i{position:absolute;display:block;border-radius:3px}
@@ -111,7 +111,7 @@
 .ex-qbox.style-purple{background:#f3e8ff}
 .ex-qtext{font-family:var(--ffb);font-size:1.9rem;font-weight:700;letter-spacing:normal;line-height:1.2;color:var(--ink)}
 .ex-qtext.word-hidden{color:transparent;text-shadow:0 0 18px rgba(147,51,234,.4);user-select:none;position:relative}
-.ex-qtext.word-hidden::after{content:"🔊 請點擊播放聽取單字";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:.88rem;font-weight:600;text-shadow:none}
+.ex-qtext.word-hidden::after{content:"🔊";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:1.5rem;text-shadow:none}
 .ex-btn-speak{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--white);border:1.5px solid var(--ink);border-radius:8px;cursor:pointer;transition:background .12s,transform .12s}
 .ex-btn-speak:hover{background:var(--ink);color:var(--white);transform:translateY(-50%) scale(1.08)}
 .ex-btn-speak svg{width:16px;height:16px}
@@ -242,8 +242,8 @@
   <div class="ex-inner">
 
     <div class="ex-phdr">
-      <h1 class="ex-title">詞彙<mark>測驗</mark>中心</h1>
-      <p class="ex-sub">Test and enhance your vocabulary knowledge</p>
+      <h1 class="ex-title">{{ __('app.exam.title_pre') }}<mark>{{ __('app.exam.title_hl') }}</mark>{{ __('app.exam.title_post') }}</h1>
+      <p class="ex-sub">{{ __('app.exam.subtitle') }}</p>
     </div>
 
     @if(session()->has('error'))
@@ -258,38 +258,38 @@
     <div class="ex-card">
       <div class="ex-card-hdr">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        <span class="ex-card-hdr-t">測驗設定</span>
+        <span class="ex-card-hdr-t">{{ __('app.exam.settings_title') }}</span>
       </div>
       <div class="ex-card-body">
         <div class="ex-sg">
 
           {{-- 題目數量 --}}
           <div>
-            <span class="ex-slabel">題目數量</span>
+            <span class="ex-slabel">{{ __('app.exam.q_count_label') }}</span>
             <div class="ex-rg">
               @foreach([10,20,30] as $n)
               <label class="ex-rbtn {{ $questionCount==$n ? 'on-blue' : '' }}">
-                <input type="radio" name="questionCount" wire:model.live="questionCount" value="{{ $n }}">{{ $n }} 題
+                <input type="radio" name="questionCount" wire:model.live="questionCount" value="{{ $n }}">{{ __('app.exam.q_n', ['n' => $n]) }}
               </label>
               @endforeach
               <label class="ex-rbtn {{ $questionCount==0 ? 'on-blue' : '' }}">
-                <input type="radio" name="questionCount" wire:model.live="questionCount" value="0">無限
+                <input type="radio" name="questionCount" wire:model.live="questionCount" value="0">{{ __('app.exam.q_unlimited') }}
               </label>
             </div>
           </div>
 
           {{-- 測驗方向 --}}
           <div>
-            <span class="ex-slabel">測驗方向</span>
+            <span class="ex-slabel">{{ __('app.exam.direction_label') }}</span>
             <div class="ex-rg">
               <label class="ex-rbtn {{ !$mixedMode&&!$listeningMode&&$testType=='en_to_zh' ? 'on-blue' : '' }} {{ $listeningMode ? 'dimmed' : '' }}">
-                <input type="radio" name="testType" wire:model.live="testType" value="en_to_zh" wire:click="$set('mixedMode',false)" {{ $listeningMode ? 'disabled' : '' }}>英 → 中
+                <input type="radio" name="testType" wire:model.live="testType" value="en_to_zh" wire:click="$set('mixedMode',false)" {{ $listeningMode ? 'disabled' : '' }}>{{ __('app.exam.dir_word_zh') }}
               </label>
               <label class="ex-rbtn {{ !$mixedMode&&!$listeningMode&&$testType=='zh_to_en' ? 'on-blue' : '' }} {{ $listeningMode ? 'dimmed' : '' }}">
-                <input type="radio" name="testType" wire:model.live="testType" value="zh_to_en" wire:click="$set('mixedMode',false)" {{ $listeningMode ? 'disabled' : '' }}>中 → 英
+                <input type="radio" name="testType" wire:model.live="testType" value="zh_to_en" wire:click="$set('mixedMode',false)" {{ $listeningMode ? 'disabled' : '' }}>{{ __('app.exam.dir_zh_word') }}
               </label>
               <label class="ex-rbtn {{ $mixedMode&&!$listeningMode ? 'on-blue' : '' }} {{ $listeningMode ? 'dimmed' : '' }}">
-                <input type="radio" name="testType" value="mixed" wire:click="$set('mixedMode',true)" {{ $listeningMode ? 'disabled' : '' }}>混合
+                <input type="radio" name="testType" value="mixed" wire:click="$set('mixedMode',true)" {{ $listeningMode ? 'disabled' : '' }}>{{ __('app.exam.dir_mixed') }}
               </label>
             </div>
           </div>
@@ -303,34 +303,34 @@
               </div>
               <span class="ex-tlabel">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:{{ $listeningMode ? 'var(--purple)' : '#888' }}"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-                聽力練習模式
+                {{ __('app.exam.listening_label') }}
               </span>
             </label>
-            <p class="ex-thint">{{ $listeningMode ? '開啟聽力模式，單字預設隱藏，需透過語音提示練習。' : '關閉聽力模式，正常顯示單字進行測驗。' }}</p>
+            <p class="ex-thint">{{ $listeningMode ? __('app.exam.listening_on') : __('app.exam.listening_off') }}</p>
           </div>
 
           {{-- 重點篩選 --}}
           <div>
-            <span class="ex-slabel">重點篩選</span>
+            <span class="ex-slabel">{{ __('app.exam.importance_label') }}</span>
             <div class="ex-rg">
               <label class="ex-rbtn {{ $importanceFilter=='all' ? 'on-blue' : '' }}">
-                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="all">全部
+                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="all">{{ __('app.exam.imp_all') }}
               </label>
               <label class="ex-rbtn {{ $importanceFilter=='important' ? 'on-orange' : '' }}">
-                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="important">⭐ 重點
+                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="important">{{ __('app.exam.imp_important') }}
               </label>
               <label class="ex-rbtn {{ $importanceFilter=='not_important' ? 'on-blue' : '' }}">
-                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="not_important">一般
+                <input type="radio" name="importanceFilter" wire:model.live="importanceFilter" value="not_important">{{ __('app.exam.imp_normal') }}
               </label>
             </div>
           </div>
 
           {{-- 語言篩選 --}}
           <div>
-            <span class="ex-slabel">語言篩選</span>
+            <span class="ex-slabel">{{ __('app.exam.lang_filter') }}</span>
             <div class="ex-rg">
               <label class="ex-rbtn {{ $selectedLanguage=='all' ? 'on-blue' : '' }}">
-                <input type="radio" name="selectedLanguage" wire:model.live="selectedLanguage" value="all">全部
+                <input type="radio" name="selectedLanguage" wire:model.live="selectedLanguage" value="all">{{ __('app.exam.lang_all') }}
               </label>
               @foreach($availableLanguages as $lang)
               <label class="ex-rbtn {{ $selectedLanguage==$lang ? 'on-blue' : '' }}">
@@ -343,21 +343,21 @@
           {{-- 題目範圍篩選 --}}
           <div class="ex-sc2">
             <span class="ex-slabel">
-              題目範圍篩選
+              {{ __('app.exam.range_label') }}
               <span style="font-size:.72rem;font-weight:600;text-transform:none;letter-spacing:0;color:#888;margin-left:6px">
-                共 <strong style="color:var(--ink)">{{ $totalCount }}</strong> 筆
+                {{ __('app.exam.range_total', ['n' => $totalCount]) }}
                 @if(($questionRangeStart || $questionRangeEnd) && count($allVocabularies) !== $totalCount)
-                  → 範圍內 <strong style="color:var(--orange)">{{ count($allVocabularies) }}</strong> 筆
+                  {{ __('app.exam.range_filtered', ['n' => count($allVocabularies)]) }}
                 @endif
               </span>
             </span>
             <div class="ex-rrange">
-              <span class="ex-rlabel2">從第</span>
+              <span class="ex-rlabel2">{{ __('app.exam.range_from') }}</span>
               <input type="number" wire:model.lazy="questionRangeStart" min="1" class="ex-rnum" placeholder="1">
-              <span class="ex-rlabel2">題到第</span>
+              <span class="ex-rlabel2">{{ __('app.exam.range_mid') }}</span>
               <input type="number" wire:model.lazy="questionRangeEnd" min="1" class="ex-rnum" placeholder="{{ $totalCount }}">
-              <span class="ex-rlabel2">題</span>
-              <button type="button" wire:click="clearQuestionRange" class="ex-bclr-r">清除</button>
+              <span class="ex-rlabel2">{{ __('app.exam.range_end') }}</span>
+              <button type="button" wire:click="clearQuestionRange" class="ex-bclr-r">{{ __('app.exam.range_clear') }}</button>
             </div>
           </div>
 
@@ -368,7 +368,7 @@
                 <div class="ex-tknob"></div>
                 <input type="checkbox" name="allowRepeat" wire:model.live="allowRepeat" style="opacity:0;position:absolute;pointer-events:none;width:0;height:0">
               </div>
-              <span class="ex-tlabel" style="font-size:.85rem">允許詞彙重複出現</span>
+              <span class="ex-tlabel" style="font-size:.85rem">{{ __('app.exam.repeat_label') }}</span>
             </label>
           </div>
 
@@ -377,10 +377,10 @@
             <div class="ex-info">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               <div>
-                共有 <strong>{{ count($allVocabularies) }}</strong> 個詞彙符合條件。
-                @if($listeningMode)<span style="color:var(--purple);font-weight:700;margin-left:4px">聽力模式強制英翻中。</span>@endif
+                {{ __('app.exam.info_count', ['n' => count($allVocabularies)]) }}
+                @if($listeningMode)<span style="color:var(--purple);font-weight:700;margin-left:4px">{{ __('app.exam.info_listening') }}</span>@endif
                 @if(!$allowRepeat && $questionCount > count($allVocabularies) && $questionCount!=0)
-                  <span style="color:var(--pink);font-weight:700;display:block;margin-top:3px">詞彙不足，實際題數：{{ count($allVocabularies) }}</span>
+                  <span style="color:var(--pink);font-weight:700;display:block;margin-top:3px">{{ __('app.exam.info_insufficient', ['n' => count($allVocabularies)]) }}</span>
                 @endif
               </div>
             </div>
@@ -391,7 +391,7 @@
         <div class="ex-start-wrap">
           <button wire:click="startExam" class="ex-btn-start">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            {{ $listeningMode ? '開始聽力測驗' : '開始測驗' }}
+            {{ $listeningMode ? __('app.exam.start_listening') : __('app.exam.start_btn') }}
           </button>
         </div>
       </div>
@@ -399,7 +399,7 @@
     <div class="ex-back">
       <a href="{{ route('vocabulary.index') }}">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        返回詞彙列表
+        {{ __('app.exam.back_to_list') }}
       </a>
     </div>
     @endif
@@ -411,12 +411,12 @@
       <div class="ex-prog">
         <div class="ex-prog-info">
           <span>
-            @if($questionCount==0) 已完成 {{ $currentQuestionIndex+1 }} 題
-            @else 進度 {{ $currentQuestionIndex+1 }} / {{ count($questions) }} @endif
+            @if($questionCount==0) {{ __('app.exam.progress_done', ['n' => $currentQuestionIndex+1]) }}
+            @else {{ __('app.exam.progress_of', ['cur' => $currentQuestionIndex+1, 'total' => count($questions)]) }} @endif
           </span>
           <span>
-            <span class="ex-prog-ok">{{ $correctCount }} 正確</span> /
-            <span class="ex-prog-ng">{{ $incorrectCount }} 錯誤</span>
+            <span class="ex-prog-ok">{{ __('app.exam.correct_count', ['n' => $correctCount]) }}</span> /
+            <span class="ex-prog-ng">{{ __('app.exam.incorrect_count', ['n' => $incorrectCount]) }}</span>
           </span>
         </div>
         <div class="ex-prog-track">
@@ -428,19 +428,19 @@
         <div class="ex-qtop">
           <div class="ex-qtags">
             @if($listeningMode)
-              <span class="ex-qtag ex-qtag-purple"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>聽力</span>
+              <span class="ex-qtag ex-qtag-purple"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>{{ __('app.exam.tag_listening') }}</span>
             @elseif($ct=='en_to_zh')
-              <span class="ex-qtag ex-qtag-blue"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>英翻中</span>
+              <span class="ex-qtag ex-qtag-blue"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>{{ __('app.exam.tag_word_zh') }}</span>
             @else
-              <span class="ex-qtag ex-qtag-green"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>中翻英</span>
+              <span class="ex-qtag ex-qtag-green"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>{{ __('app.exam.tag_zh_word') }}</span>
             @endif
             @if(isset($questions[$currentQuestionIndex]['is_important']) && $questions[$currentQuestionIndex]['is_important'])
-              <span class="ex-qtag ex-qtag-orange">⭐ 重點</span>
+              <span class="ex-qtag ex-qtag-orange">{{ __('app.exam.tag_important') }}</span>
             @endif
             @if(isset($questions[$currentQuestionIndex]['language_type']) && $questions[$currentQuestionIndex]['language_type']!='english')
               <span class="ex-qtag" style="background:#f3e8ff">{{ $this->getLanguageDisplayName($questions[$currentQuestionIndex]['language_type']) }}</span>
             @endif
-            <span class="ex-qnum">第 {{ $currentQuestionIndex+1 }} 題</span>
+            <span class="ex-qnum">{{ __('app.exam.q_num', ['n' => $currentQuestionIndex+1]) }}</span>
           </div>
           <div class="ex-qops">
             @if($listeningMode && $ct=='en_to_zh')
@@ -452,13 +452,13 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
                 @endif
               </svg>
-              <span id="exToggleTxt">{{ $wordHidden ? '顯示' : '隱藏' }}</span>
+              <span id="exToggleTxt">{{ $wordHidden ? __('app.exam.show') : __('app.exam.hide') }}</span>
             </button>
             @endif
             @if(!$mixedMode && !$listeningMode)
             <button wire:click="toggleTestType" class="ex-btn-flip">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-              切換方向
+              {{ __('app.exam.flip_dir') }}
             </button>
             @endif
           </div>
@@ -469,13 +469,18 @@
             ? $questions[$currentQuestionIndex]['english_word']
             : implode('、', (array)$questions[$currentQuestionIndex]['chinese_word']);
           $isEn = ($ct=='en_to_zh');
+          $speakLang = match($questions[$currentQuestionIndex]['language_type'] ?? 'english') {
+            'japanese' => 'ja-JP',
+            'korean'   => 'ko-KR',
+            default    => 'en-US',
+          };
         @endphp
 
         <div style="text-align:center;margin-bottom:14px">
           <div class="ex-qbox {{ $listeningMode ? 'style-purple' : 'style-blue' }}">
             <div id="exWordText" class="ex-qtext {{ $listeningMode && $wordHidden ? 'word-hidden' : '' }}">{{ $cw }}</div>
             @if($isEn)
-            <button type="button" onclick="speakWord('{{ $questions[$currentQuestionIndex]['english_word'] }}')" class="ex-btn-speak" title="播放發音">
+            <button type="button" onclick="speakWord('{{ $questions[$currentQuestionIndex]['english_word'] }}','{{ $speakLang }}')" class="ex-btn-speak" title="{{ __('app.exam.play_title') }}">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             </button>
             @endif
@@ -484,13 +489,13 @@
           @if($listeningMode && $wordHidden)
           <div class="ex-hidden-hint">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            單字已隱藏，請點擊播放按鈕聆聽，然後輸入中文翻譯
+            {{ __('app.exam.hidden_hint') }}
           </div>
           @endif
 
           @if(!empty($questions[$currentQuestionIndex]['part_of_speech']))
-            @php $pl=['noun'=>'名詞','verb'=>'動詞','adjective'=>'形容詞','adverb'=>'副詞','phrase'=>'片語']; $ps=$questions[$currentQuestionIndex]['part_of_speech']; @endphp
-            <span class="ex-pos-pill ex-pos-{{ $ps }}">{{ $pl[$ps] ?? $ps }}</span>
+            @php $ps=$questions[$currentQuestionIndex]['part_of_speech']; @endphp
+            <span class="ex-pos-pill ex-pos-{{ $ps }}">{{ __('app.pos.' . $ps, [], null) ?: $ps }}</span>
           @endif
 
           @if(!empty($questions[$currentQuestionIndex]['example_sentence']) && $answerResult !== null)
@@ -500,7 +505,7 @@
               <div class="ex-extrans">{{ $questions[$currentQuestionIndex]['example_sentence_translation'] }}</div>
               @endif
             </span>
-            <button type="button" onclick="speakWord('{{ $questions[$currentQuestionIndex]['example_sentence'] }}')" class="ex-btn-speak-sm">
+            <button type="button" onclick="speakWord('{{ $questions[$currentQuestionIndex]['example_sentence'] }}','{{ $speakLang }}')" class="ex-btn-speak-sm">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             </button>
           </div>
@@ -513,8 +518,8 @@
             @php $raw=$questions[$currentQuestionIndex]['chinese_word']; $mc=is_array($raw)?count($raw):1; @endphp
           @endif
           <span class="ex-ans-label">
-            請輸入{{ $ct=='en_to_zh' ? '中文' : '英文' }}翻譯
-            @if($ct=='en_to_zh' && $mc > 1)<span class="ex-ans-note">（共 {{ $mc }} 個，順序不拘）</span>@endif
+            {{ $ct=='en_to_zh' ? __('app.exam.ans_label_zh') : __('app.exam.ans_label_word') }}
+            @if($ct=='en_to_zh' && $mc > 1)<span class="ex-ans-note">{{ __('app.exam.ans_note', ['n' => $mc]) }}</span>@endif
           </span>
           <div class="ex-ans-rows">
             @for($m=0;$m<$mc;$m++)
@@ -523,38 +528,38 @@
               <input type="text" wire:model="userAnswers.{{ $m }}"
                 @if($m===$mc-1) wire:keydown.enter="checkAnswer" @endif
                 class="ex-ans-input"
-                placeholder="{{ $ct=='en_to_zh' ? '輸入中文意思…' : '輸入英文翻譯…' }}"
+                placeholder="{{ $ct=='en_to_zh' ? __('app.exam.ans_ph_zh') : __('app.exam.ans_ph_word') }}"
                 autocomplete="off"
                 @if($m===0) autofocus @endif>
             </div>
             @endfor
           </div>
-          <button wire:click="checkAnswer" class="ex-btn-confirm">確認</button>
+          <button wire:click="checkAnswer" class="ex-btn-confirm">{{ __('app.exam.confirm_btn') }}</button>
 
         @else
           <div class="ex-result-banner {{ $answerResult ? 'ex-result-ok' : 'ex-result-ng' }}">
             @if($answerResult)
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 正確！
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> {{ __('app.exam.result_correct') }}
             @else
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 不正確！
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> {{ __('app.exam.result_wrong') }}
             @endif
           </div>
           <div class="ex-compare">
             <div>
-              <div class="ex-cmp-label">你的答案</div>
+              <div class="ex-cmp-label">{{ __('app.exam.your_answer') }}</div>
               <div class="ex-cmp-val">{{ implode('、', array_filter(array_map('trim', $userAnswers))) }}</div>
             </div>
             <div>
-              <div class="ex-cmp-label">正確答案</div>
+              <div class="ex-cmp-label">{{ __('app.exam.correct_answer') }}</div>
               <div class="ex-cmp-val ex-cmp-val--ok">{{ $correctAnswer }}</div>
             </div>
           </div>
           <div class="ex-next-wrap">
             <button wire:click="nextQuestion" class="ex-btn-next">
               @if($currentQuestionIndex < count($questions)-1 || ($infiniteMode && $allowRepeat))
-                下一題 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                {{ __('app.exam.next_q') }} <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
               @else
-                完成測驗 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                {{ __('app.exam.finish_exam') }} <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               @endif
             </button>
           </div>
@@ -565,7 +570,7 @@
     <div class="ex-back">
       <button wire:click="backToSetup" class="ex-bottom-btn">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        返回設定
+        {{ __('app.exam.back_to_setup') }}
       </button>
     </div>
     @endif
@@ -576,22 +581,22 @@
     <div class="ex-card">
       <div class="ex-card-hdr">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="ex-card-hdr-t">測驗結果</span>
-        @if($listeningMode)<span class="ex-qtag ex-qtag-purple" style="font-size:.7rem;padding:2px 9px;margin-left:8px">聽力模式</span>@endif
+        <span class="ex-card-hdr-t">{{ __('app.exam.result_title') }}</span>
+        @if($listeningMode)<span class="ex-qtag ex-qtag-purple" style="font-size:.7rem;padding:2px 9px;margin-left:8px">{{ __('app.exam.listening_tag') }}</span>@endif
       </div>
       <div class="ex-card-body">
 
         <div class="ex-rhero">
-          <div class="ex-rhc"><div class="ex-rhlabel">總題數</div><div class="ex-rhval">{{ count($answeredQuestions) }}</div></div>
-          <div class="ex-rhc"><div class="ex-rhlabel">答對</div><div class="ex-rhval">{{ $correctCount }}</div></div>
-          <div class="ex-rhc"><div class="ex-rhlabel">答錯</div><div class="ex-rhval">{{ $incorrectCount }}</div></div>
+          <div class="ex-rhc"><div class="ex-rhlabel">{{ __('app.exam.stat_total') }}</div><div class="ex-rhval">{{ count($answeredQuestions) }}</div></div>
+          <div class="ex-rhc"><div class="ex-rhlabel">{{ __('app.exam.stat_correct') }}</div><div class="ex-rhval">{{ $correctCount }}</div></div>
+          <div class="ex-rhc"><div class="ex-rhlabel">{{ __('app.exam.stat_wrong') }}</div><div class="ex-rhval">{{ $incorrectCount }}</div></div>
         </div>
 
         <div style="margin-bottom:24px">
           <div class="ex-pct-track">
             <div class="ex-pct-fill" style="width:{{ $pct }}%;background:{{ $listeningMode ? 'var(--purple)' : 'var(--cyan)' }}"></div>
           </div>
-          <div class="ex-pct-label">正確率 {{ $pct }}%</div>
+          <div class="ex-pct-label">{{ __('app.exam.pct_label', ['pct' => $pct]) }}</div>
         </div>
 
         @if($mixedMode && !$listeningMode && count($answeredQuestions)>0)
@@ -613,12 +618,12 @@
           @endphp
           <div class="ex-stats2">
             <div class="ex-sb">
-              <div class="ex-sb-hdr"><div class="ex-sb-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>英翻中</div><span class="ex-sb-count">{{ $etc }}題</span></div>
+              <div class="ex-sb-hdr"><div class="ex-sb-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>{{ __('app.exam.word_zh_label') }}</div><span class="ex-sb-count">{{ $etc }}{{ __('app.exam.q_n', ['n' => '']) }}</span></div>
               <div class="ex-sb-bar"><div class="ex-sb-fill" style="width:{{ $etp }}%;background:var(--cyan)"></div></div>
               <div class="ex-sb-pct">{{ $etp }}% ({{ $ecc }}/{{ $etc }})</div>
             </div>
             <div class="ex-sb">
-              <div class="ex-sb-hdr"><div class="ex-sb-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>中翻英</div><span class="ex-sb-count">{{ $ztc }}題</span></div>
+              <div class="ex-sb-hdr"><div class="ex-sb-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>{{ __('app.exam.zh_word_label') }}</div><span class="ex-sb-count">{{ $ztc }}{{ __('app.exam.q_n', ['n' => '']) }}</span></div>
               <div class="ex-sb-bar"><div class="ex-sb-fill" style="width:{{ $ztp }}%;background:#4ade80"></div></div>
               <div class="ex-sb-pct">{{ $ztp }}% ({{ $zcc }}/{{ $ztc }})</div>
             </div>
@@ -629,10 +634,12 @@
           <table class="ex-logtable">
             <thead>
               <tr>
-                <th>問題</th>
-                @if($mixedMode && !$listeningMode)<th>類型</th>@endif
-                @if($listeningMode)<th>模式</th>@endif
-                <th>你的答案</th><th>正確答案</th><th>結果</th>
+                <th>{{ __('app.exam.log_question') }}</th>
+                @if($mixedMode && !$listeningMode)<th>{{ __('app.exam.log_type') }}</th>@endif
+                @if($listeningMode)<th>{{ __('app.exam.log_mode') }}</th>@endif
+                <th>{{ __('app.exam.log_your_ans') }}</th>
+                <th>{{ __('app.exam.log_correct_ans') }}</th>
+                <th>{{ __('app.exam.log_result') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -640,14 +647,14 @@
               <tr>
                 <td class="ex-log-q">{{ $q['question'] }}</td>
                 @if($mixedMode && !$listeningMode)
-                <td><span class="ex-qtag {{ $q['type']=='en_to_zh' ? 'ex-qtag-blue' : 'ex-qtag-green' }}" style="font-size:.68rem;padding:2px 8px">{{ $q['type']=='en_to_zh' ? '英翻中' : '中翻英' }}</span></td>
+                <td><span class="ex-qtag {{ $q['type']=='en_to_zh' ? 'ex-qtag-blue' : 'ex-qtag-green' }}" style="font-size:.68rem;padding:2px 8px">{{ $q['type']=='en_to_zh' ? __('app.exam.tag_word_zh') : __('app.exam.tag_zh_word') }}</span></td>
                 @endif
                 @if($listeningMode)
-                <td><span class="ex-qtag ex-qtag-purple" style="font-size:.68rem;padding:2px 8px">聽力</span></td>
+                <td><span class="ex-qtag ex-qtag-purple" style="font-size:.68rem;padding:2px 8px">{{ __('app.exam.tag_listening') }}</span></td>
                 @endif
                 <td class="{{ $q['isCorrect'] ? 'ex-log-ok' : 'ex-log-ng' }}">{{ $q['userAnswer'] }}</td>
                 <td style="font-weight:600">{{ $q['correctAnswer'] }}</td>
-                <td><span class="ex-dot {{ $q['isCorrect'] ? 'ex-dot-ok' : 'ex-dot-ng' }}">{{ $q['isCorrect'] ? '正確' : '錯誤' }}</span></td>
+                <td><span class="ex-dot {{ $q['isCorrect'] ? 'ex-dot-ok' : 'ex-dot-ng' }}">{{ $q['isCorrect'] ? __('app.exam.log_correct_dot') : __('app.exam.log_wrong_dot') }}</span></td>
               </tr>
               @endforeach
             </tbody>
@@ -657,11 +664,11 @@
         <div class="ex-res-acts">
           <button wire:click="restartExam" wire:loading.attr="disabled" class="ex-btn-restart">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            再測一次
+            {{ __('app.exam.restart_btn') }}
           </button>
           <button wire:click="backToSetup" class="ex-btn-cfg">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            更改設定
+            {{ __('app.exam.settings_btn') }}
           </button>
         </div>
       </div>
@@ -670,7 +677,7 @@
     <div class="ex-back">
       <a href="{{ route('vocabulary.index') }}">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        返回詞彙列表
+        {{ __('app.exam.back_to_list') }}
       </a>
     </div>
     @endif
@@ -687,22 +694,22 @@
       @php $sp=round(($correctCount/count($answeredQuestions))*100); @endphp
       <span class="ex-mhero">@if($sp>=90)🏆@elseif($sp>=70)✅@elseif($sp>=40)⚡@else📖@endif</span>
       <div class="ex-mgrade">@if($sp>=90)Excellent @elseif($sp>=70)Good Job @elseif($sp>=40)Keep Going @else Keep Trying @endif</div>
-      <h2 class="ex-mtitle">{{ $listeningMode ? '聽力測驗完成！' : '測驗完成！' }}</h2>
+      <h2 class="ex-mtitle">{{ $listeningMode ? __('app.exam.modal_listening') : __('app.exam.modal_done') }}</h2>
       <p class="ex-msub">
-        @if($sp>=90) 太棒了！你的表現非常優秀！
-        @elseif($sp>=70) 很好！繼續保持！
-        @elseif($sp>=40) 不錯的嘗試，還有進步空間。
-        @else 繼續努力，多加練習！ @endif
+        @if($sp>=90) {{ __('app.exam.modal_excellent') }}
+        @elseif($sp>=70) {{ __('app.exam.modal_good') }}
+        @elseif($sp>=40) {{ __('app.exam.modal_ok') }}
+        @else {{ __('app.exam.modal_keep_trying') }} @endif
       </p>
       <div class="ex-mscore-box">
         <div class="ex-mscore-grid">
-          <div><div class="ex-msc-label">正確率</div><div class="ex-msc-val">{{ $sp }}%</div></div>
-          <div><div class="ex-msc-label">分數</div><div class="ex-msc-val">{{ $correctCount }}/{{ count($answeredQuestions) }}</div></div>
+          <div><div class="ex-msc-label">{{ __('app.exam.modal_pct') }}</div><div class="ex-msc-val">{{ $sp }}%</div></div>
+          <div><div class="ex-msc-label">{{ __('app.exam.modal_score') }}</div><div class="ex-msc-val">{{ $correctCount }}/{{ count($answeredQuestions) }}</div></div>
         </div>
       </div>
       <div class="ex-mbtn-row">
-        <button onclick="document.getElementById('exModal').style.display='none'" class="ex-mbtn-detail">查看詳情</button>
-        <button wire:click="restartExam" class="ex-mbtn-retry">再測一次</button>
+        <button onclick="document.getElementById('exModal').style.display='none'" class="ex-mbtn-detail">{{ __('app.exam.modal_details') }}</button>
+        <button wire:click="restartExam" class="ex-mbtn-retry">{{ __('app.exam.modal_retry') }}</button>
       </div>
     </div>
   </div>
@@ -711,14 +718,18 @@
 
 <script>
 let exWordHidden = @json($wordHidden ?? false);
+const exTxtShow = '{{ __("app.exam.show") }}';
+const exTxtHide = '{{ __("app.exam.hide") }}';
 function exToggleWord(){
   const w=document.getElementById('exWordText'),t=document.getElementById('exToggleTxt');
-  if(w&&t){exWordHidden=!exWordHidden;w.classList.toggle('word-hidden',exWordHidden);t.textContent=exWordHidden?'顯示':'隱藏';}
+  if(w&&t){exWordHidden=!exWordHidden;w.classList.toggle('word-hidden',exWordHidden);t.textContent=exWordHidden?exTxtShow:exTxtHide;}
 }
-function speakWord(text){
+function speakWord(text, lang='en-US'){
   if('speechSynthesis' in window){
     window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=0.9;
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=lang;
+    u.rate=(lang==='ko-KR'||lang==='ja-JP')?0.85:0.9;
     window.speechSynthesis.speak(u);
   }
 }
@@ -728,7 +739,7 @@ document.addEventListener('livewire:updated',()=>{
   const toggleEl=document.getElementById('exToggleTxt');
   if(wordEl&&toggleEl){
     exWordHidden=wordEl.classList.contains('word-hidden');
-    toggleEl.textContent=exWordHidden?'顯示':'隱藏';
+    toggleEl.textContent=exWordHidden?exTxtShow:exTxtHide;
   }
 });
 </script>

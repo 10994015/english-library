@@ -78,7 +78,7 @@ class VocabularyComponent extends Component
                 'is_important' => !$vocabulary->is_important
             ]);
 
-            $message = $vocabulary->is_important ? '已標記為重點詞彙！' : '已取消重點標記！';
+            $message = $vocabulary->is_important ? __('app.vocab.marked') : __('app.vocab.unmarked');
             session()->flash('message', $message);
         }
     }
@@ -106,7 +106,7 @@ class VocabularyComponent extends Component
 
             if ($vocabulary) {
                 $vocabulary->delete();
-                session()->flash('message', '詞彙「' . $vocabulary->english_word . '」已成功刪除！');
+                session()->flash('message', __('app.vocab.deleted', ['word' => $vocabulary->english_word]));
             }
 
             $this->confirmingDelete = null;
@@ -168,7 +168,7 @@ class VocabularyComponent extends Component
             'editExampleSentence'              => 'nullable|string|max:255',
             'editExampleSentenceTranslation'   => 'nullable|string|max:255',
             'editIsImportant'                  => 'boolean',
-            'editLanguageType'                 => 'required|string|in:english,japanese',
+            'editLanguageType'                 => 'required|string|in:english,japanese,korean',
         ]);
 
         $meanings = array_values(array_filter(
@@ -177,7 +177,7 @@ class VocabularyComponent extends Component
         ));
 
         if (empty($meanings)) {
-            $this->addError('editChineseWords.0', '請至少輸入一個中文意思');
+            $this->addError('editChineseWords.0', __('app.common.min_one_meaning'));
             return;
         }
 
@@ -196,7 +196,7 @@ class VocabularyComponent extends Component
 
         $this->showEditModal = false;
         $this->editingId = null;
-        session()->flash('message', '詞彙已成功更新！');
+        session()->flash('message', __('app.vocab.saved'));
     }
 
     // 清除所有篩選
@@ -235,10 +235,11 @@ class VocabularyComponent extends Component
 
         // 統計資料
         $stats = [
-            'total' => Vocabulary::where('user_id', $userId)->count(),
-            'important' => Vocabulary::where('user_id', $userId)->where('is_important', true)->count(),
-            'english' => Vocabulary::where('user_id', $userId)->where('language_type', 'english')->count(),
+            'total'    => Vocabulary::where('user_id', $userId)->count(),
+            'important'=> Vocabulary::where('user_id', $userId)->where('is_important', true)->count(),
+            'english'  => Vocabulary::where('user_id', $userId)->where('language_type', 'english')->count(),
             'japanese' => Vocabulary::where('user_id', $userId)->where('language_type', 'japanese')->count(),
+            'korean'   => Vocabulary::where('user_id', $userId)->where('language_type', 'korean')->count(),
         ];
 
         return view('livewire.vocabulary-component', [
